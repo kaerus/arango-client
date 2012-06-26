@@ -4,7 +4,7 @@
   "description": "ArangoDB node.js module",
   "keywords": [
     "arangodb",
-    "nosql",
+    "nosql"
   ],
   "author": {
     "name": "kaerus",
@@ -14,11 +14,8 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git://github.com/kaerus/arango.git"
+    "url": "git://github.com/kaerus/arango-client.git"
   },
   "main": "index.js",
-  "engines": [
-    "node >= 0.6.0"
-  ],
   "license": "MIT"
 }
