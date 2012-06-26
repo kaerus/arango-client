@@ -1,0 +1,24 @@
+{
+  "name": "arango",
+  "version": "0.0.1",
+  "description": "ArangoDB node.js module",
+  "keywords": [
+    "arangodb",
+    "nosql",
+  ],
+  "author": {
+    "name": "kaerus",
+    "email": "contact@kaerus.com"
+  },
+  "dependencies": {"node.extend":"1.0.0"},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kaerus/arango.git"
+  },
+  "main": "index.js",
+  "engines": [
+    "node >= 0.6.0"
+  ],
+  "license": "MIT"
+}
