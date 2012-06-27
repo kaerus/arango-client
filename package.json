@@ -1,5 +1,5 @@
 {
-  "name": "arango",
+  "name": "arango-client",
   "version": "0.0.1",
   "description": "ArangoDB node.js module",
   "keywords": [
