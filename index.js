@@ -1,1 +1,1 @@
-module.exports = require( './lib/extend' );
+module.exports = require( './lib/arango' );
