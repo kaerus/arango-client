@@ -11,7 +11,7 @@
     "email": "contact@kaerus.com"
   },
   "dependencies": {"node.extend":"1.0.0"},
-  "devDependencies": {},
+  "devDependencies": {"mocha":"1.2.1"},
   "repository": {
     "type": "git",
     "url": "git://github.com/kaerus/arango-client.git"
