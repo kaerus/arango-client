@@ -53,7 +53,7 @@ suite('Arango session', function(){
   });
  
  test('change password', function(done){
-  db.session.changePassword("test",function(err,ret){
+  db.session.changePass("test",function(err,ret){
     assert(!err);
     done();
   });
@@ -81,7 +81,7 @@ suite('Arango session', function(){
   });
 
   test('change to empty password', function(done){
-  db.session.changePassword("",function(err,ret){
+  db.session.changePass("",function(err,ret){
     assert(!err);
     done();
   });
