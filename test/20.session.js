@@ -1,17 +1,16 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , crypto = require('crypto')
   , util = require('util');
 
 suite('Arango session', function(){
   var db = new arango.Connection;
 
   test('set user credentials & validate hashed password', function(done){
-    var user = "test", pass = "password";
+    var user = "test", pass = "word";
     db.config.user = user;
     db.config.pass = pass;
     assert.equal(db.config.user,user,'validating username');
-    pass = crypto.createHash('sha256').update("password").digest('hex');
+    pass = db.hashPass("word");
     assert.equal(db.config.pass,pass,"validating hashed password");
     done();
   });
