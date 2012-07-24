@@ -13,4 +13,11 @@ suite('Arango client', function(){
     done();
   });
   
+  test('get status', function(done){
+    db.get("/_admin/status",function(err,ret){
+      assert(!err);
+      done();
+    });
+  });
+  
 });

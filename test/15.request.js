@@ -7,15 +7,10 @@ suite('Arango request', function(){
 
   test('get db status', function(done){   
     var path = "/_admin/status";
-    db.request.get(path,function(ret){
+    db.get(path,function(err,ret){
+      assert(!err);
       done();
-    }).on('error',function(e){
-      assert(!e.code,e.Error);
-      done(e.Error);
     });    
   });
-  
-  
-  
   
 });

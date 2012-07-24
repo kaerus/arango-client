@@ -36,7 +36,7 @@ suite('Arango session', function(){
     db.config.user = "manager";
     db.config.pass = "";
     db.session.login(function(err,ret){
-      assert(!err);
+      assert(!err,"login failed: " + err);
       assert(db._sid,"has session");
       assert(db._rights,"has rights");
       assert.deepEqual(db._rights,ret.rights,"validating rights");
