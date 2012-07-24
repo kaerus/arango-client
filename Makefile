@@ -1,10 +1,9 @@
 REPORTER = spec
 ASSERTER = chai
-TESTER_BIN = @./node_modules/mocha/bin/mocha
-TESTER_OPT = --reporter $(REPORTER) --require $(ASSERTER) --ui tdd
-TEST_CMD = $(TESTER_BIN) $(TESTER_OPT)
+TESTER = @./node_modules/mocha/bin/mocha
+EXECUTE = $(TESTER) --reporter $(REPORTER) --require $(ASSERTER) --ui tdd
 
 test:
-	$(TEST_CMD) test/*.js
+	$(EXECUTE) test/*.js
 
 .PHONY: test
