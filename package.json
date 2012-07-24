@@ -6,12 +6,27 @@
     "arangodb",
     "nosql"
   ],
-  "author": {
-    "name": "kaerus",
-    "email": "contact@kaerus.com"
+  "author": { 
+    "name": "Kaerus",
+    "email": "contact@kaerus.com",
+    "web": "http://kaerus.com"
   },
-  "dependencies": {"node.extend":"1.0.0"},
-  "devDependencies": {"mocha":"1.2.1"},
+  "contributors": [
+    "anders elo <anders@kaerus.com>"
+  ],
+  "dependencies": {
+    "node.extend":"1.0.0"
+  },
+  "devDependencies": {
+    "mocha":"1.2.1", 
+    "chai":"1.1.1"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "bugs": {
+    "url": "https://github.com/kaerus/arango-client/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/kaerus/arango-client.git"
