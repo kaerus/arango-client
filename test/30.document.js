@@ -6,7 +6,7 @@ var assert = require('chai').assert
 suite('Arango document', function(){
   var db = new arango.Connection({name:"test"});
   var data = {somedata:"test1",somemore:"test2"};
-  var id, rev;
+  var collection =  "testcol", id, rev;
   
   test('create and get document', function(done){
     db.document.create(data,function(err,ret){
