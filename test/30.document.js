@@ -61,4 +61,23 @@ suite('Arango document', function(){
   });
   
   
+  test('create document and force collection', function(done){
+    db.document.create_("newcollection",data,function(err,ret){
+      if(err) assert(!err,util.inspect(ret));
+      id = ret._id;
+      rev = ret._rev;
+      done();
+    });
+  });
+  
+  test('delete and verify', function(done){
+     db.document.delete(id,function(err,ret){
+        if(err) assert(!err, util.inspect(ret));
+        assert.equal(ret._id,id,"validate deleted document id");
+        assert.equal(ret._rev,rev,"validate deleted document rev");   
+        done();
+     });
+  });
+  
+  
 });
