@@ -3,7 +3,7 @@ var assert = require('chai').assert
   , util = require('util')
   , extend = require('node.extend');
   
-suite('Arango index', function(){
+suite('Arango cursor', function(){
   var db = new arango.Connection({name:"test"});
   var query = {query:"FOR u IN test RETURN u", count:true, batchSize:2};
   var query2 = {query:"FOR u IN test RETURN u._id",count:true, batchSize:1};
