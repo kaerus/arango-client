@@ -8,8 +8,8 @@ Example
 ```
 var arango = require('arango.client'), util = require('util');
  
-/* Prepare a connection, defaults {protocol:'http', hostname:'127.0.0.1', port: 8529} */ 
-db = new arango.Connection({name:"testcollection"});
+/* Prepare a connection */ 
+db = new arango.Connection("http://127.0.0.1/test");
 
 /* we need to first create our test collection */
 db.collection.create(function(err,ret){
