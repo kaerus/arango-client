@@ -8,6 +8,21 @@ suite('Arango document', function(){
   var data = {somedata:"test1",somemore:"test2"};
   var collection =  "testcol", id, rev;
   
+  test('create test collection', function(done){
+    db.collection.create(function(err,ret){
+      done();
+    });
+  });
+  
+  test('create 100 documents', function(done){
+    for(var i = 0; i < 100; i++) {
+      db.document.create(data).on('error',function(error){
+        assert(error.code,error.message);
+      });
+    }
+      done();
+  });
+  
   test('create and get document', function(done){
     db.document.create(data,function(err,ret){
       assert(!err);
