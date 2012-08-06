@@ -2,8 +2,8 @@ arango-client
 =============
 ArangoDB client node.js module
 
-Example
-=======
+Examples
+--------
 
 ```
 var arango = require('arango.client'), util = require('util');
@@ -52,6 +52,55 @@ db.cursor.create({query:"FOR u IN test RETURN u.a"}).on('result', function(resul
   console.log(util.inspect(result));
 }).on('error',function(error){
   console.log("error(%s):", error.code, error.message);
+});
+
+/* query builder examples */
+
+/* simple query string */
+db.query.exec("FOR u in test RETURN u",function(err,ret){
+  console.log("err(%s):", err, ret);
+});
+
+/* using the experimental query builder */
+query = db.query.for('u').in('users')
+                .filter('u.contact.address.state == "CA"')
+                .collect('region = u.contact.region').into('group')
+                .sort('LENGTH(group) DESC').limit('0, 5')
+                .return('{"region": region, "count": LENGTH(group)}');
+
+/* show the composed query string */
+query.string
+'FOR u IN users FILTER u.contact.address.state == @state COLLECT region = u.contact.region INTO group SORT LENGTH(group) DESC LIMIT 0, 5 RETURN {"region": region, "count": LENGTH(group)}'
+                
+/* execute test */
+query.test(function(err,ret){
+  console.log("err(%s):",err,ret);
+});
+
+/* execute the query with the variable 'state' */
+query.exec({state: "CA"}, function(err,ret){
+  console.log("err(%s):",err,ret);
+});
+
+/* nested queries */
+query = b.query.for('likes').in(function() {
+  return this.for('u').in('users')
+  .filter('u.gender == @gender && @likes')
+  .from('u.likes').include(function() {
+      return this.from('value').in('u.likes')
+      .filter('value != @likes')
+      .return('value');
+  });
+}).collect('what = likes').into('group')
+.sort('LENGTH(group) DESC')
+.limit('0, 5')
+.return('{"what": what, "count": LENGTH(group)}');
+
+query.string
+'FOR likes IN ( FOR u IN users FILTER u.gender == @gender && @likes IN u.likes  FOR value IN u.likes FILTER value != @likes RETURN value ) COLLECT what = likes INTO group SORT LENGTH(group) DESC LIMIT 0, 5 RETURN {"what": what, "count": LENGTH(group)}'
+
+query.exec({gender:"female",likes:"running"},function(err,ret){
+  console.log("err(%s):",err,ret);
 });
 ```
 
