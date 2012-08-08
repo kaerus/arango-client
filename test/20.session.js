@@ -86,6 +86,7 @@ suite('Arango session', function(){
   });
  });
   
+  /* This API is not finished 
   test('create a user',function(done){
     db.session.createUser("admin","lille","lalu",function(err,ret){
       assert(!err);
@@ -106,6 +107,6 @@ suite('Arango session', function(){
       done();
     });
   }); 
- 
+ */
   
 });

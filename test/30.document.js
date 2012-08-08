@@ -1,10 +1,9 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , util = require('util')
-  , extend = require('node.extend');
+  , util = require('util');
   
 suite('Arango document', function(){
-  var db = new arango.Connection({name:"test"});
+  var db = new arango.Connection("http://127.0.0.1/test");
   var data = {somedata:"test1",somemore:"test2"};
   var collection =  "testcol", id, rev;
   
@@ -29,7 +28,7 @@ suite('Arango document', function(){
       id = ret._id;
       rev = ret._rev;
       db.document.get(id,function(err,doc){
-        var docdata = extend({_id:id,_rev:rev},data);
+        var docdata = db.extend({_id:id,_rev:rev},data);
         assert(!err);
         assert.deepEqual(docdata,doc);
         done();
@@ -37,15 +36,22 @@ suite('Arango document', function(){
     });
   });
   
+  test('check head',function(done){
+    db.document.head(id,function(err,ret){
+      assert.equal(err,200,ret);
+      done();
+    });
+  });
+  
   test('update document', function(done){
-    var moredata = extend(data,{more:"some extra"});
+    var moredata = db.extend(data,{more:"some extra"});
     db.document.put(id,moredata,function(err,ret){
       assert(!err);
       assert.equal(id,ret._id,"id should be same");
       assert.notEqual(rev,ret._rev,"rev should be updated");
       rev = ret._rev;
       db.document.get(id,function(err,doc){
-        var docdata = extend({_id:id,_rev:rev},moredata);
+        var docdata = db.extend({_id:id,_rev:rev},moredata);
         assert(!err);
         assert.deepEqual(docdata,doc);
         done();   
@@ -53,6 +59,7 @@ suite('Arango document', function(){
     });
   });
   
+  /* PATCH method is not supported
   test('get and patch document', function(done) {
     db.document.get(id,function(err,doc){
         assert(!err);
@@ -64,6 +71,7 @@ suite('Arango document', function(){
         });
     });
   });
+  */
   
   test('delete and verify deleted', function(done){
     db.document.delete(id,function(err,ret){
