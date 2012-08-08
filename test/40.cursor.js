@@ -1,15 +1,42 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , util = require('util')
-  , extend = require('node.extend');
-  
+  , util = require('util');
+
+var db = new arango.Connection({name:"testcol"});
+var query = {query:"FOR u IN testcursor RETURN u", count:true, batchSize:2};
+var query2 = {query:"FOR u IN testcursor RETURN u._id",count:true, batchSize:1};
+var id;
+ 
+function initSuite(done){
+  db = new arango.Connection({name:"testcursor"});
+    db.collection.create(function(err,ret){
+      var data = {};
+      for(var i = 0; i < 50; i++) {
+        data.i = i;
+        data.msg = "test";
+        db.document.create(data).on('error',function(error){
+          assert(error.code,error.message);
+        }).on('result',function(res){
+            
+        });
+      }
+      done();
+    });
+ }
+
+function exitSuite(done){
+  db.collection.delete("testcursor",function(err,ret){
+    if(err) assert(!err,util.inspect(ret));
+    done();
+  });
+}
+
+ 
 suite('Arango cursor', function(){
-  var db = new arango.Connection({name:"test"});
-  var query = {query:"FOR u IN test RETURN u", count:true, batchSize:2};
-  var query2 = {query:"FOR u IN test RETURN u._id",count:true, batchSize:1};
-  var id;
   
-  test('create cursor', function(done){
+  suiteSetup(initSuite);
+  
+  test('create', function(done){
     db.cursor.create(query,function(err,ret){
       if(err) assert(!err,util.inspect(ret));
       assert(ret.id,"validate id");
@@ -47,6 +74,8 @@ suite('Arango cursor', function(){
       done();
     });
   });
-    
+   
+  suiteTeardown(exitSuite);
+   
 });
   

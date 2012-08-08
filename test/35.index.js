@@ -2,11 +2,31 @@ var assert = require('chai').assert
   , arango = require('../index')
   , util = require('util')
   , extend = require('node.extend');
-  
+
+var db, id; 
+var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };
+ 
+function initSuite(done){
+  db = new arango.Connection({name:"testcol"});
+  /* reset test collection */
+  db.collection.delete("testcol",function(err,ret){
+    
+    db.collection.create(function(err,ret){
+      if(err) assert(!err,util.inspect(ret));
+      done();
+    });
+  });
+}
+
+function exitSuite(done){
+  db.collection.delete("testcol",function(err,ret){
+    if(err) assert(!err,util.inspect(ret));
+    done();
+  });
+}
+
 suite('Arango index', function(){
-  var db = new arango.Connection({name:"test"});
-  var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };
-  var id;
+  suiteSetup(initSuite);
   
   test('create index', function(done){
     db.index.create(hash_index,function(err,ret){
@@ -48,4 +68,5 @@ suite('Arango index', function(){
     });
   });
   
+  suiteTeardown(exitSuite);
 });

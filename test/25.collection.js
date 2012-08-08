@@ -2,10 +2,11 @@ var assert = require('chai').assert
   , arango = require('../index')
   , util = require('util')
   , extend = require('node.extend');
-  
+
+var db = new arango.Connection;
+var id,id2,name = "testcollection";
+
 suite('Arango collection', function(){
-  var db = new arango.Connection;
-  var id,id2,name = "testcollection";
   
   test('create collection', function(done){
     db.collection.create({name: name},function(err,ret){

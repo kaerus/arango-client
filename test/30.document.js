@@ -1,17 +1,33 @@
 var assert = require('chai').assert 
   , arango = require('../index')
   , util = require('util');
+
+var db, data = {somedata:"test1",somemore:"test2"};
+var testcol1 =  "testcol", testcol2 = "testcol2", id, rev;
+
   
-suite('Arango document', function(){
-  var db = new arango.Connection("http://127.0.0.1/test");
-  var data = {somedata:"test1",somemore:"test2"};
-  var collection =  "testcol", id, rev;
-  
-  test('create test collection', function(done){
-    db.collection.create(function(err,ret){
+function initSuite(done){
+  db = new arango.Connection({name:testcol1});
+  /* reset test collection */
+  db.collection.delete(testcol1,function(err,ret){
+    
+    db.collection.create(testcol1,function(err,ret){
+      if(err) assert(!err,util.inspect(ret));
       done();
     });
   });
+}
+
+function exitSuite(done){
+  db.collection.delete(testcol1,function(err,ret){
+    db.collection.delete(testcol2,function(err,ret){
+      if(!err) done();
+    });
+  });  
+}
+
+suite('Arango document', function(){
+  suiteSetup(initSuite);
   
   test('create 100 documents', function(done){
     for(var i = 0; i < 100; i++) {
@@ -85,7 +101,7 @@ suite('Arango document', function(){
   
   
   test('create document and force collection', function(done){
-    db.document.create_("newcollection",data,function(err,ret){
+    db.document.create(true,testcol2,data,function(err,ret){
       if(err) assert(!err,util.inspect(ret));
       id = ret._id;
       rev = ret._rev;
@@ -102,5 +118,5 @@ suite('Arango document', function(){
      });
   });
   
-  
+  suiteTeardown(exitSuite);
 });
