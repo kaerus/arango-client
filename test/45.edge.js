@@ -8,7 +8,7 @@ var from, to, id, rev, data = {e:123}, doc = {a:1,b:2};
 
   
 function setupDocs(done){
-  db.document.create(data,function(err,ret){
+  db.document.create(true,data,function(err,ret){
     if(err) assert(!err,util.inspect(ret));
     from = ret._id;
       
@@ -18,6 +18,14 @@ function setupDocs(done){
       done();
     });     
   });  
+}
+
+function teardownDocs(done){
+  db.document.delete(from,function(err,ret){
+    db.document.delete(to,function(err,ret){
+      done();
+    });
+  });
 }
 
 suite('Arango edge', function(){
@@ -143,4 +151,5 @@ suite('Arango edge', function(){
     });
   });
   
+  suiteTeardown(teardownDocs);
 });
