@@ -1,10 +1,56 @@
-arango-client
-=============
-ArangoDB client node.js module
+ArangoDB client
+===============
+A client for the ArangoDB nosql database.
+
+Install
+-------
+```
+npm install arango.client
+```
+
+Test
+----
+```
+npm test
+```
+
+Usage
+-----
+Either as node.js module or from the browser (using browserify).
+
+
+Callbacks gets error, result (or message on error) and headers. 
+```javascript
+db.document.get(docid,function(err,ret,hdr){
+  console.log("headers:", util.inspect(hdr));
+  if(err) console.log("err(%s):", err, ret);
+  else console.log("result: ", util.inspect(ret));
+});
+```
+When using Events, on 'error' passes an error object with error.code and error.message
+```javascript
+db.document.get("error").on('error',function(error){
+  console.log("err(%s):",error.code, error.message);
+});
+```
+On 'result' event gets result data and headers (if needed).
+```javascript
+db.document.list().on('result',function(result){
+  console.log("result:", util.inspect(result));
+});
+```
+By default the 'error' event is being logged to console.
+For details regarding the ArangoDB interface check out lib/api/ 
+and use the node console to experiment.
+```javascript
+node
+arango = require('arango.client')
+{ Connection: [Function] }
+db = new arango.Connection
+```
 
 Examples
 --------
-
 ```javascript
 var arango = require('arango.client'), util = require('util');
  
