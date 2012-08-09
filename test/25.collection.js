@@ -1,15 +1,26 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , util = require('util')
-  , extend = require('node.extend');
+  , util = require('util');
 
 var db = new arango.Connection;
 var id,id2,name = "testcollection";
 
-suite('Arango collection', function(){
+function initSuite(done){
+  db.collection.delete(name,function(err,ret){
+    done();
+  });
+}
+
+function exitSuite(done){
+  db.collection.delete(name,function(err,ret){
+    done();
+  });  
+}
   
+suite('Arango collection', function(){
+    
   test('create collection', function(done){
-    db.collection.create({name: name},function(err,ret){
+    db.collection.create(name,function(err,ret){
       assert(!err,util.inspect(ret));
       assert.equal(ret.name,name,"collection name validation");
       id = ret.id;
@@ -60,7 +71,8 @@ suite('Arango collection', function(){
       done();
     });
   });
-
+  
+  suiteTeardown(exitSuite);
 });  
   
   

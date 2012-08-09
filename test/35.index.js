@@ -1,7 +1,6 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , util = require('util')
-  , extend = require('node.extend');
+  , util = require('util');
 
 var db, id; 
 var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };

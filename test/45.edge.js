@@ -1,8 +1,7 @@
 var assert = require('chai').assert 
   , arango = require('../index')
-  , util = require('util')
-  , extend = require('node.extend');
-
+  , util = require('util');
+  
 var db = new arango.Connection("http://127.0.0.1/test");
 var from, to, id, rev, data = {e:123}, doc = {a:1,b:2};
 
@@ -136,14 +135,14 @@ suite('Arango edge', function(){
       done();
     });
   });
-  
+/*  
   test('verify edge deleted by HEAD', function(done){
     db.edge.head(id, function(err,ret){
       assert.notEqual(err,200,ret);
       done();
     });
   });
-  
+*/  
   test('verify edge deleted by get', function(done){
     db.edge.get(id, function(err,ret){
       assert(err,ret);
