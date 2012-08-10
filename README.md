@@ -134,7 +134,7 @@ db.query.exec("FOR u in test RETURN u",function(err,ret){
 /* a bindvar for the collection name */
 db.query.string = "FOR u IN @collection RETURN u";
 ...
-/* execute the query in batches of two results per iteration */
+/* execute the query and pass the collection variable */
 db.query.exec({collection:"test"},function(err,ret){
   console.log("err(%s):",util.inspect(ret));
 });
