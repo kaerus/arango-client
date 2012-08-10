@@ -112,15 +112,14 @@ db.document.create("newcollection",{b:"test"},function(err,ret){
 ```
 Utilizing events
 ----------------
-Sometimes it's nicer to use events instead of callbacks.
+Sometimes it's better to use events instead of callbacks.
 
 ```javascript
 /* alternate style utilizing events */
 db.document.list("newcollection").on('result',function(result){
   console.log(util.inspect(result));
-}).on('error',function(error){
-  console.log("error(%s):", error.code, error.message);
 });
+/* errors are logged to console per default */
 ```
 
 Queries
