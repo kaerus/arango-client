@@ -15,16 +15,16 @@
     "anders elo <anders@kaerus.com>"
   ],
   "dependencies": {
+  	"requirejs":">=2.0.6",
+  	"amdefine": ">=0.0.2"
   },
   "devDependencies": {
     "mocha":"1.2.1", 
-    "chai":"1.1.1",
-    "browserify":"~1.13.6"
+    "chai":"1.1.1"
   },
   "scripts": {
     "test": "make test"
   },
-  "browserify" : "browser/index.js",
   "bugs": {
     "url": "https://github.com/kaerus/arango-client/issues"
   },
