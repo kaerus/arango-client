@@ -1,3 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
-module.exports = require( './lib/arango' );
+define(function (require) {
+	return require( './lib/arango' );
+});
