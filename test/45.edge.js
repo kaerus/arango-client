@@ -135,14 +135,14 @@ suite('Arango edge', function(){
       done();
     });
   });
-/*  
+  
   test('verify edge deleted by HEAD', function(done){
     db.edge.head(id, function(err,ret){
-      assert.notEqual(err,200,ret);
+      assert(err,ret);
       done();
     });
   });
-*/  
+
   test('verify edge deleted by get', function(done){
     db.edge.get(id, function(err,ret){
       assert(err,ret);
