@@ -8,27 +8,15 @@ suite('Arango client', function(){
   test('arango.client http', function(done){   
     db =  new arango.Connection;
     assert(db,'is set to something');
-    assert.equal(db.transport,require('http'),'has http transport');
-    assert.deepEqual({ hostname: '127.0.0.1', port: 8529, setHost: false },
-      db.config.server, 'has default config');
-    done();
-  });
-  
-  test('arango.client https', function(done){   
-    db =  new arango.Connection({protocol:'https'});
-    assert(db,'is set to something');
-    assert.equal(db.transport,require('https'),'has https transport');
-    assert.deepEqual({ hostname: '127.0.0.1', port: 8529, setHost: false },
-      db.config.server, 'has default config');
     done();
   });
    
   test('url parser 1',function(done){
     conn = "http://1.2.3.4:1234/test";
     db = new arango.Connection(conn);
-    assert.deepEqual({ hostname: '1.2.3.4', 
-                       port: 1234, 
-                       setHost: false }, db.config.server, 'validate config');
+    assert.deepEqual({ protocol: 'http',
+                       hostname: '1.2.3.4', 
+                       port: 1234}, db.config.server, 'validate config');
     assert.equal(db.config.name,'test','collection name');
     done();
   });  
@@ -36,10 +24,9 @@ suite('Arango client', function(){
   test('url parser 2',function(done){
     conn = "https://some.host.com:80/database"; 
     db = new arango.Connection(conn);
-    assert.equal(db.transport,require('https'),'has https transport');
-    assert.deepEqual({ hostname: 'some.host.com', 
-                       port: 80, 
-                       setHost: false }, db.config.server, 'validate config');
+    assert.deepEqual({ protocol: 'https',
+                       hostname: 'some.host.com', 
+                       port: 80}, db.config.server, 'validate config');
     assert.equal(db.config.name,'database','collection name');                   
     done();
   });  
@@ -47,9 +34,9 @@ suite('Arango client', function(){
   test('url parser 3',function(done){
     conn = "http://username:password@some.host.com:8529/database"; 
     db = new arango.Connection(conn);
-    assert.deepEqual({ hostname: 'some.host.com', 
-                       port: 8529, 
-                       setHost: false }, db.config.server, 'validate config');
+    assert.deepEqual({ protocol: 'http',
+                       hostname: 'some.host.com', 
+                       port: 8529}, db.config.server, 'validate config');
     assert.equal(db.config.name,'database','collection name');
     assert.equal(db.config.user,'username','username');
     assert.equal(db.config.pass,db.hashPass('password'),'password');
@@ -59,16 +46,16 @@ suite('Arango client', function(){
   test('url parser 4',function(done){
     conn = "http://username@some.host.com:8529/database"; 
     db = new arango.Connection(conn);
-    assert.deepEqual({ hostname: 'some.host.com', 
-                       port: 8529, 
-                       setHost: false }, db.config.server, 'validate config');
+    assert.deepEqual({ protocol: 'http',
+                       hostname: 'some.host.com', 
+                       port: 8529}, db.config.server, 'validate config');
     assert.equal(db.config.name,'database','collection name');
     assert.equal(db.config.user,'username','username');
     assert.equal(db.config.pass,'','password');
     done();
   });  
   
-  test('get status', function(done){
+  test('try connection', function(done){
     db = new arango.Connection
     db.get("/_admin/status",function(err,ret){
       assert(!err);
