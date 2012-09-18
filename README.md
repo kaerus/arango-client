@@ -5,21 +5,35 @@ A client for the ArangoDB nosql database.
 Install
 -------
 ```
-npm install arango.client
+As nodejs module: npm install arango.client
+From source: git clone git://github.com/kaerus/arango-client
 ```
 
 Test
 ----
 ```
+npm install -d
 npm test
 ```
 
+Building
+--------
+Not yet, but a build script will be included so that a 
+minimized, single file package is generated. 
+
+
 Usage
 =====
-Either as node.js server module or from a web client.
+You can use arango-client either as node.js server module or from a web client.
+Since arango-client is written in AMD compatible fashion you should be able 
+to require it in your project using any standard AMD loader.
+However, require.js is included by default when installing through npm.
 
-
-Callbacks gets error, result (or message on error) and headers. 
+Introduction
+------------
+All callbacks receives error code, return value and message headers.
+If the error is set, return contains an error message, otherwise return
+contains whatever yields from the database, usually in the form of a json object. 
 ```javascript
 db.document.get(docid,function(err,ret,hdr){
   console.log("headers:", util.inspect(hdr));
@@ -27,13 +41,20 @@ db.document.get(docid,function(err,ret,hdr){
   else console.log("result: ", util.inspect(ret));
 });
 ```
-When using Events, on 'error' passes an error object with error.code and error.message
+
+Using events
+------------
+You may also use events as a means to receive data or errors.
+This can be very useful in some cases, however the current implementation 
+is somewhat limited at the moment but new exciting developements are in the pipeline.
+
+The on 'error' event passes an error object with error.code and error.message.
 ```javascript
 db.document.get("error").on('error',function(error){
   console.log("err(%s):",error.code, error.message);
 });
 ```
-On 'result' event gets result data and headers (if needed).
+On 'result' event passes the returned data and headers.
 ```javascript
 db.document.list().on('result',function(result){
   console.log("result:", util.inspect(result));
@@ -55,14 +76,14 @@ Require
 -------
 ```javascript
 var arango = require('arango.client')
-  , util = require('util');   // required for debug purposes
 ``` 
  
 Initialization
 --------------
-To prepare a connection you have to use the Connection(<string>,<object>,<function>) constructor.
+To initialize a connection you have to use the ```Connection([string],[object])``` constructor.
 ```javascript
-/* use default, connects to http://127.0.0.1:8529 */
+/* use default settings, connects to http://127.0.0.1:8529 in nodejs */
+/* or window.location when using from your browser */
 db = new arango.Connection
 
 /* connection string */
@@ -130,20 +151,26 @@ db.query.exec("FOR u in test RETURN u",function(err,ret){
   console.log("err(%s):", err, ret);
 });
 
-/* a bindvar for the collection name */
-db.query.string = "FOR u IN @collection RETURN u";
+/* A bindvar for the collection name */
+db.query.string = "FOR u IN @@collection RETURN u";
 ...
 /* execute the query and pass the collection variable */
-db.query.exec({collection:"test"},function(err,ret){
+db.query.exec({'@collection':"test"},function(err,ret){
   console.log("err(%s):",util.inspect(ret));
 });
 ```
+Note: ArangoDB expects @@ in front of collection names when using a bindvar.
+The bindvar attribute in this case needs to be prefixed with a single @. 
+In all other cases the bindvar atttribute can be provided without any prefix 
+and the variable in the query string is denoted with a single @ . 
+
+
 
 Query builder
 -------------
 The query builder is still experimental and prone for changes.
-Batch size can be set using the query.count(<number>) method.
-However iterations over result sets are not fully supported.
+Batch size can be set using the ```query.count(<number>)``` method.
+However iterations over result sets are not fully supported yet.
 ```javascript
 /* using the experimental query builder */
 query = db.query.for('u').in('users')
@@ -190,12 +217,11 @@ query.exec({gender:"female",likes:"running"},function(err,ret){
 ```
 
 
-
 License
 =======
 MIT License
 
-Copyright (C) 2012 Anders Elo
+Copyright (C) Kaerus 2012, Anders Elo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
