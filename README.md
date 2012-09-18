@@ -18,8 +18,11 @@ npm test
 
 Building
 --------
-Not yet, but a build script will be included so that a 
-minimized, single file package is generated. 
+To be able to build a minified version you need to have the require.js optimizer r.js installed.
+```
+make dist
+```
+This creates a single minified javascript file in the ```dist``` directory.
 
 
 Usage
