@@ -60,9 +60,8 @@ db.document.list().on('result',function(result){
   console.log("result:", util.inspect(result));
 });
 ```
-By default the 'error' event is being logged to console.
 For details regarding the ArangoDB interface check out lib/api/ 
-and use the node console to experiment.
+and use the nodejs/browser console to experiment.
 ```javascript
 node
 arango = require('arango.client')
