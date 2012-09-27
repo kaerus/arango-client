@@ -9,11 +9,6 @@ var libs = [
 	'./25.collection.js'
 ];
 
-var jsdom = require('jsdom');
-
-
-
-
 define(libs,function(){
 
 // Runs once at the very beginning.

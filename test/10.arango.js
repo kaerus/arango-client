@@ -8,8 +8,6 @@ var libs = [
 
 define(libs,function(arango){ 
 
-var jsdom = require('jsdom');
-
 module = QUnit.module;
 
 module('Connection');

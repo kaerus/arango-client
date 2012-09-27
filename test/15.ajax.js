@@ -1,12 +1,12 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-  
+
 var libs = [
   '../lib/ajax',
   './lib/qunit-1.10.js'
 ];
 
 define(libs,function(Ajax){ 
-  var params = {protocol:'http',hostname:"127.0.0.1",port:8529,path:"_admin/status"}, request, data;
+  var params = {protocol:'http',hostname:"127.0.0.1",port:8529,path:"/_admin/status"}, request, data;
   module = QUnit.module;
 
   module('Ajax');
