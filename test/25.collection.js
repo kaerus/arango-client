@@ -68,17 +68,15 @@ asyncTest('list collections',1,function(){
 });
 
 
-asyncTest('collection properties',4,function(){
-  db.collection.create("properties",function(err,ret){
-    db.collection.getProperties("properties",function(err,ret){
+asyncTest('collection properties',5,function(){
+  db.collection.create("properties",function(err){
+    ok(!err,"created");
+    db.collection.getProperties("properties",function(err,p){
       ok(!err,"get properties");
-      js = ret.journalSize;
-      ws = ret.waitForSync;
-
-      db.collection.setProperties("properties",{waitForSync:!ws,journalSize:js*10},function(err,ret){
+      db.collection.setProperties("properties",{waitForSync:!p.waitForSync,journalSize:p.journalSize*10},function(err,ret){
         ok(!err,"set properties");
-        equal(ret.waitForSync,!ws,"waitForSync changed");
-        equal(ret.journalSize,js*10,"journalSize changed");
+        equal(ret.waitForSync,!p.waitForSync,"waitForSync changed");
+        equal(ret.journalSize,p.journalSize*10,"journalSize changed");
         start();
       });
     });
@@ -98,14 +96,14 @@ asyncTest('unload & load',4,function(){
   });  
 });
 
-asyncTest('rename collection',3,function(){
+asyncTest('rename collection',4,function(){
   db.collection.create("rename",function(err,ret){
     ok(!err,"created");
-    var rid = ret.id;
-    db.collection.rename(rid,"rename2",function(err,ret){
+    ok(ret.id,"have id");
+    db.collection.rename(ret.id,"rename2",function(err,ret){
       ok(!err,"successful");
       equal(ret.name,"rename2","renamed");
-      db.collection.delete(rid);
+      db.collection.delete(ret.id);
       start();
     });
   });
