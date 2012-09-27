@@ -1,88 +1,94 @@
-var assert = require('chai').assert 
-  , arango = require('../index')
-  , util = require('util');
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+  
+var libs = [
+   '../lib/arango',
+  './lib/qunit-1.10.js'
+];
 
-suite('Arango session', function(){
-  var db = new arango.Connection;
+define(libs,function(arango){ 
+  module = QUnit.module;
+  module('Session');
 
-  test('set user credentials & validate hashed password', function(done){
+  var db = new arango.Connection({name:"test"});
+
+  test('set user credentials & validate hashed password',2,function(){
     var user = "test", pass = "word";
     db.config.user = user;
     db.config.pass = pass;
-    assert.equal(db.config.user,user,'validating username');
+    equal(db.config.user,user,'validating username');
     pass = db.hashPass("word");
-    assert.equal(db.config.pass,pass,"validating hashed password");
-    done();
+    equal(db.config.pass,pass,"validating hashed password");
   });
   
-  test('attempt login with no password',function(done){
+  /* this only passes if no password is set */
+  asyncTest('attempt login with no password',1,function(){
     db.config.pass = undefined;
     db.session.login(function(err,ret){
-      assert(err);
-      done();
+      ok(!err,"No password");
+      start();
     });
   });
  
-  test('attempt login with wrong username',function(done){
+  asyncTest('attempt login with wrong username',1,function(){
     db.config.user = "xyzrandom42";
     db.session.login(function(err,ret){
-      assert(err);
-      done();
+      ok(err,"wrong username");
+      start();
     });
   });
  
-  test('attempt successful login',function(done){
+  asyncTest('attempt successful login',5,function(){
     db.config.user = "manager";
     db.config.pass = "";
     db.session.login(function(err,ret){
-      assert(!err,"login failed: " + err);
-      assert(db._sid,"has session");
-      assert(db._rights,"has rights");
-      assert.deepEqual(db._rights,ret.rights,"validating rights");
-      assert.equal(db._sid,ret.sid,"Validating sid");
-      done();
+      ok(!err,"login failed: " + err);
+      ok(db._sid,"has session");
+      ok(db._rights,"has rights");
+      deepEqual(db._rights,ret.rights,"validating rights");
+      equal(db._sid,ret.sid,"Validating sid");
+      start();
     });
   });
   
-  test('get all users', function(done){
+  asyncTest('get all users',1,function(){
     db.session.users(function(err,ret){
-      assert(!err);
-      done();
+      ok(!err,"received users");
+      start();
     });
   });
  
- test('change password', function(done){
+ asyncTest('change password',1,function(){
   db.session.changePass("test",function(err,ret){
-    assert(!err);
-    done();
+    ok(!err,"password changed");
+    start();
   });
  });
  
-  test('logout from session',function(done){
+  asyncTest('logout from session',3,function(){
     db.session.logout(function(err,ret){
-      assert(!err);
-      assert(!db._sid);
-      assert(!db._rights);
-      done();
+      ok(!err,"logout successful");
+      ok(!db._sid,"sid is unset");
+      ok(!db._rights,"rights are unset");
+      start();
     });
   });
 
-  test('login with new password', function(done) {
+  asyncTest('login with new password',5,function() {
     db.config.pass = "test";
     db.session.login(function(err,ret){
-      assert(!err);
-      assert(db._sid,"has session");
-      assert(db._rights,"has rights");
-      assert.deepEqual(db._rights,ret.rights,"validating rights");
-      assert.equal(db._sid,ret.sid,"Validating sid");
-      done();
+      ok(!err,"login ok");
+      ok(db._sid,"has session");
+      ok(db._rights,"has rights");
+      deepEqual(db._rights,ret.rights,"validated rights");
+      equal(db._sid,ret.sid,"Validated sid");
+      start();
     });
   });
 
-  test('change to empty password', function(done){
+  asyncTest('change to empty password', function(){
   db.session.changePass("",function(err,ret){
-    assert(!err);
-    done();
+    ok(!err,"Empty password");
+    start();
   });
  });
   

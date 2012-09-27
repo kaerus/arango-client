@@ -1,78 +1,85 @@
-var assert = require('chai').assert 
-  , arango = require('../index')
-  , util = require('util');
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
+  
+var libs = [
+   '../lib/arango',
+  './lib/qunit-1.10.js'
+];
 
-var db = new arango.Connection;
-var id,id2,name = "testcollection";
+define(libs,function(arango){ 
+  module = QUnit.module;
 
-function initSuite(done){
+var db = new arango.Connection
+  , id, id2, name = "testcollection";
+  
+module('Collection');      
+
+
+moduleBegin = function(){
   db.collection.delete(name,function(err,ret){
-    done();
+    start();
   });
-}
+} 
 
-function exitSuite(done){
-  db.collection.delete(name,function(err,ret){
-    done();
+moduleDone = function(){
+    db.collection.delete(name,function(err,ret){
   });  
 }
-  
-suite('Arango collection', function(){
-    
-  test('create collection', function(done){
-    db.collection.create(name,function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.name,name,"collection name validation");
-      id = ret.id;
-      done();
-    });
-  });
-  
-  db.config.name = "testcollection2";
 
-  test('create collection 2', function(done){
-    db.collection.create(function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.name,db.config.name,"collection name validation");
-      id2 = ret.id;
-      done();
-    });
-  });
-  
-  test('delete collection 2',function(done){
-    db.collection.delete(id2,function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.id,id2,"deleted collection id validation");
-      done();
-    });
-  });
+stop();
 
-  
-  test('get collection by id',function(done){
-    db.collection.get(id,function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.name,name,"collection name validation");
-      done();
-    });
+asyncTest('create collection',2,function(){
+  db.collection.create(name,function(err,ret){
+    ok(!err,"Created collection");
+    equal(ret.name,name,"name validated");
+    id = ret.id;
+    start();
   });
-  
-  test('get collection by name',function(done){
-    db.collection.get(name,function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.id,id,"collection id validation");
-      done();
-    });
+});
+
+asyncTest('create collection 2',2,function(){
+  var name2 = "testcollection2";
+  db.collection.create(name2,function(err,ret){
+    console.log("ERr(%s):",err,ret);
+    ok(!err,"create collection");
+    equal(ret.name,name2,"name validated");
+    id2 = ret.id;
+    start();
   });
-  
-  test('delete collection',function(done){
-    db.collection.delete(id,function(err,ret){
-      assert(!err,util.inspect(ret));
-      assert.equal(ret.id,id,"deleted collection id validation");
-      done();
-    });
+});
+
+asyncTest('delete collection 2',2,function(){
+  db.collection.delete(id2,function(err,ret){
+    ok(!err,"Delete collection");
+    equal(ret.id,id2,"deleted collection id validated");
+    start();
   });
-  
-  suiteTeardown(exitSuite);
+});
+
+
+asyncTest('get collection by id',2,function(){
+  db.collection.get(id,function(err,ret){
+    ok(!err,"got collection");
+    equal(ret.name,name,"name validated");
+    start();
+  });
+});
+
+asyncTest('get collection by name',2,function(){
+  db.collection.get(name,function(err,ret){
+    ok(!err,"got collection");
+    equal(ret.id,id,"id validated");
+    start();
+  });
+});
+
+asyncTest('delete collection',2,function(){
+  db.collection.delete(id,function(err,ret){
+    ok(!err,"Deleted");
+    equal(ret.id,id,"deleted id validated");
+    start();
+  });
+});
+
 });  
   
   
