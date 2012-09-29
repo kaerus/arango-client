@@ -9,94 +9,106 @@ define(libs,function(arango){
   module = QUnit.module;
 
 var db = new arango.Connection;
-  
-module('Collection',{
-  setup: function(){
-    db.collection.create("testcol");
-  }
-});      
 
+module("Collection");  
 
-asyncTest('create collection',2,function(){
-  db.collection.delete("testcol2",function(){
-    db.collection.create("testcol2",function(err,ret){
-      ok(!err,"Created collection");
-      equal(ret.name,"testcol2","name validated");
+asyncTest('create',2,function(){
+    db.collection.create("testcreate",function(err,ret){
+      ok(!err,"created");
+      equal(ret.name,"testcreate","name validated");
+      db.collection.delete("testcreate");
       start();
     });
-  });
 });
 
-asyncTest('get collection by id',3,function(){
-  db.collection.get("testcol",function(err,ret){
-    ok(!err,"got collection by name");
-    id = ret.id;
-    db.collection.get(id,function(err,ret){
-      ok(!err,"got collection by id");
-      equal(ret.name,"testcol","name validated");
+asyncTest('delete',3,function(){
+  db.collection.create("testdelete",function(err,ret){
+    ok(!err,"created");
+    var id = ret.id;
+    db.collection.delete(id,function(err,ret){
+      ok(!err,"Deleted");
+      equal(ret.id,id,"deleted id validated");
       start();
+    });
+  });    
+});
+
+
+asyncTest('get by name & id',4,function(){
+  db.collection.create("testget",function(create){
+    ok(!create,"created");
+    db.collection.get("testget",function(err,ret){
+      ok(!err,"got collection by name");
+      id = ret.id;
+      db.collection.get(id,function(err,ret){
+        ok(!err,"got collection by id");
+        equal(ret.name,"testget","name validated");
+        db.collection.delete("testget");
+        start();
+      });
+    });
+  });    
+});
+
+asyncTest('figures & count',3,function(){
+  db.collection.create("testfigures",function(create){
+    ok(!create,"created");
+    db.collection.figures("testfigures",function(err,ret){
+      ok(!err,"figures");
+      db.collection.count("testfigures",function(err,ret){
+        ok(!err,"count");
+        db.collection.delete("testfigures");
+        start();
+      });
     });
   });  
 });
 
-asyncTest('get collection by name',1,function(){
-  db.collection.get("testcol",function(err,ret){
-    ok(!err,"got collection");
-    start();
-  });
-});
-
-asyncTest('collection figures',1,function(){
-  db.collection.figures("testcol",function(err,ret){
-    ok(!err,"successful");
-    start();
-  });
-});
-
-asyncTest('collection count',1,function(){
-  db.collection.count("testcol",function(err,ret){
-    ok(!err,"successful");
-    start();
-  });
-});
-
-asyncTest('list collections',1,function(){
-  db.collection.list(function(err,ret){
-    ok(!err,"successful");
+asyncTest('list',1,function(){
+  db.collection.list(function(list){
+    ok(!list,"list");
     start();
   });
 });
 
 
-asyncTest('collection properties',5,function(){
-  db.collection.create("properties",function(err){
-    ok(!err,"created");
-    db.collection.getProperties("properties",function(err,p){
+asyncTest('get & set properties',5,function(){
+  db.collection.create("testprop",function(create){
+    ok(!create,"created");
+    db.collection.getProperties("testprop",function(err,p){
       ok(!err,"get properties");
-      db.collection.setProperties("properties",{waitForSync:!p.waitForSync,journalSize:p.journalSize*10},function(err,ret){
+      var sync = !(p.waitForSync), size = p.journalSize * 10;
+      console.log("properties sync=%s size=%s:", sync,size,p);
+      db.collection.setProperties("testprop",{waitForSync: sync,journalSize:size},function(err,ret){
         ok(!err,"set properties");
-        equal(ret.waitForSync,!p.waitForSync,"waitForSync changed");
-        equal(ret.journalSize,p.journalSize*10,"journalSize changed");
+        equal(ret.waitForSync,sync,"waitForSync changed");
+        equal(ret.journalSize,size,"journalSize changed");
+        db.collection.delete("testprop");
         start();
       });
     });
   });   
 });
 
-asyncTest('unload & load',4,function(){
-  db.collection.unload("testcol",function(err,ret){
-    ok(!err,"unloaded");
-    id = ret.id;
-    equal(ret.status,4,"status 4");
-    db.collection.load(id,function(err,ret){
-      ok(!err,"loaded");
-      equal(ret.status,3,"status 3");
-      start();
+asyncTest('unload & load',5,function(){
+  db.collection.create("testload",function(create){
+  ok(!create,"created");
+
+    db.collection.unload("testload",function(err,ret){
+      ok(!err,"unloaded");
+      id = ret.id;
+      equal(ret.status,4,"status 4");
+      db.collection.load(id,function(err,ret){
+        ok(!err,"loaded");
+        equal(ret.status,3,"status 3");
+        db.collection.delete("testload");
+        start();
+      });
     });
-  });  
+  });    
 });
 
-asyncTest('rename collection',4,function(){
+asyncTest('rename',4,function(){
   db.collection.create("rename",function(err,ret){
     ok(!err,"created");
     ok(ret.id,"have id");
@@ -107,19 +119,6 @@ asyncTest('rename collection',4,function(){
       start();
     });
   });
-});
-
-
-asyncTest('delete collection',3,function(){
-  db.collection.create("deleteme",function(err,ret){
-    ok(!err,"created");
-    var id = ret.id;
-    db.collection.delete(id,function(err,ret){
-      ok(!err,"Deleted");
-      equal(ret.id,id,"deleted id validated");
-      start();
-    });
-  });    
 });
 
 });  
