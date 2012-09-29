@@ -9,7 +9,7 @@ define(libs,function(arango){
 
 module = QUnit.module;
 
-var db = new arango.Connection({name:'testdoc'})
+var db = new arango.Connection({name:'testimplicit'})
   , data = {somedata:"test1",somemore:"test2"};
 
 var utils = require('../lib/utils');

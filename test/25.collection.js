@@ -25,10 +25,10 @@ asyncTest('create',2,function(){
 asyncTest('delete',3,function(){
   db.collection.create("testdelete",function(err,ret){
     ok(!err,"created");
-    var id = ret.id;
-    db.collection.delete(id,function(err,ret){
+    this.id = ret.id;
+    db.collection.delete(ret.id,function(err,ret){
       ok(!err,"Deleted");
-      equal(ret.id,id,"deleted id validated");
+      equal(ret.id,this.id,"deleted id validated");
       start();
     });
   });    
