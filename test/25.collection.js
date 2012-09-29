@@ -6,7 +6,8 @@ var libs = [
 ];
 
 define(libs,function(arango){ 
-  module = QUnit.module;
+
+module = QUnit.module;
 
 var db = new arango.Connection;
 
@@ -34,14 +35,15 @@ asyncTest('delete',3,function(){
 });
 
 
-asyncTest('get by name & id',4,function(){
+asyncTest('get by name & id',5,function(){
   db.collection.create("testget",function(create){
     ok(!create,"created");
     db.collection.get("testget",function(err,ret){
-      ok(!err,"got collection by name");
+      ok(!err,"get by name");
+      ok(ret.id,"have id");
       id = ret.id;
       db.collection.get(id,function(err,ret){
-        ok(!err,"got collection by id");
+        ok(!err,"get by id");
         equal(ret.name,"testget","name validated");
         db.collection.delete("testget");
         start();
@@ -93,7 +95,6 @@ asyncTest('get & set properties',5,function(){
 asyncTest('unload & load',5,function(){
   db.collection.create("testload",function(create){
   ok(!create,"created");
-
     db.collection.unload("testload",function(err,ret){
       ok(!err,"unloaded");
       id = ret.id;
@@ -113,8 +114,8 @@ asyncTest('rename',4,function(){
     ok(!err,"created");
     ok(ret.id,"have id");
     db.collection.rename(ret.id,"rename2",function(err,ret){
-      ok(!err,"successful");
-      equal(ret.name,"rename2","renamed");
+      ok(!err,"renamed");
+      equal(ret.name,"rename2","name validated");
       db.collection.delete(ret.id);
       start();
     });
