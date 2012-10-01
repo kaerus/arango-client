@@ -1,86 +1,65 @@
-var assert = require('chai').assert 
-  , arango = require('../index')
-  , util = require('util');
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
-var collection = "testkey";
+var libs = [
+   '../lib/arango',
+  './lib/qunit-1.10.js'
+];
+
+define(libs,function(arango){ 
+
+module = QUnit.module;
+
+var db = new arango.Connection({name:"testkey"});
 var key, id, db
   , options = {}, data = "this is a test"
   , extend = {a:1,b:2}, date = new Date();
 
-  
-function initSuite(done){
-  db = new arango.Connection({name:collection});
-  /* reset test collection */
-  db.collection.delete(collection,function(err,ret){
-    db.collection.create(collection,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      done();
-    });
-  });
-}
-
-function exitSuite(done){
-  db.collection.delete(collection,function(err,ret){
-    if(!err) done();
-  });  
-}
+//var utils = require('../lib/utils');
 
 
-suite('Arango key store', function(){
-  
-  suiteSetup(initSuite);
-  test('create key',function(done){
+module("Key");  
+asyncTest('create, get, update & verify',function(){
+  db.collection.create(function(err){
+    ok(!err,"created collection");
     key = "testkey";
     date.setDate(date.getDate()+1);
     date.setMilliseconds(0);  // Note: adb truncates millisecs
     options.expires = date;
     options.extended = extend; 
-    db.key.create(collection,key,options,data,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
+    db.key.create(key,options,data,function(err,ret){
+      ok(!err,"created key");
       id = ret._id; // ? 
-      done();
-    });
-  });
-  
-  test('get key',function(done){
-    db.key.get(collection,key,function(err,ret,hdr){
-      if(err) assert(!err,util.inspect(ret));
-      var d = new Date(Date.parse(hdr['x-voc-expires']));
-      assert.equal(d.toISOString(),
-                   date.toISOString(),"validate expiration");
-      assert.deepEqual(JSON.parse(hdr['x-voc-extended']),
-                   extend,"validate extended");
-      assert.equal(ret,data,"validate data");             
-      done();
-    });
-  });
-  
-  test('update & verify key',function(done){
-    options.extend = {b:3,c:1};
-    data = "we have updated the data";
-    db.key.put(collection,key,options,data,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      assert.isTrue(ret.changed,"validate changed");
-      
-      db.key.get(collection,key,function(err,ret,hdr){
-        if(err) assert(!err,util.inspect(ret));
-        var d = new Date(Date.parse(hdr['x-voc-expires']));
-        assert.equal(d.toISOString(),
-                   date.toISOString(),"validate expiration");
-        assert.deepEqual(JSON.parse(hdr['x-voc-extended']),
-                   extend,"validate extended");
-        assert.equal(ret,data,"validate data");             
-        done();
+      db.key.get(key,function(err,ret,hdr){
+        ok(!err,"get");
+        var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
+        console.log("x-voc-expires:",hdr['x-voc-expires']);
+        equal(d.toISOString(),
+                     date.toISOString(),"validate expiration");
+        deepEqual(JSON.parse(hdr['x-voc-extended']),
+                     extend,"validate extended");
+        assert.equal(ret,data,"validate data"); 
+        options.extend = {b:3,c:1};
+        data = "we have updated the data";
+        db.key.put(key,options,data,function(err,ret){
+          ok(!err,"update");
+          ok(ret.changed,"validate changed");
+          db.key.get(key,function(err,ret,hdr){
+            ok(!err,"refresh");
+            var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
+            equal(d.toISOString(),
+                       date.toISOString(),"validate expiration");
+            deepEqual(JSON.parse(hdr['x-voc-extended']),
+                       extend,"validate extended");
+            equal(ret,data,"validate data");         
+            db.key.delete(key,function(err,ret){
+              ok(!err,"deleted");
+              db.collection.delete("testkey");
+              start();
+            });    
+          });
+        });            
       });
     });
   });
-  
-  test('delete key',function(done){
-    db.key.delete(collection,key,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      done();
-    });
-  });
-  
-  suiteTeardown(exitSuite);
+});
 });

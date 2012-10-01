@@ -7,7 +7,11 @@ var libs = [
 	'./15.ajax.js',
 	'./20.session.js',
 	'./25.collection.js',
-	'./30.document.js'
+	'./30.document.js',
+	'./35.index.js',
+	'./40.cursor.js',
+	'./45.edge.js',
+	'./50.key.js'
 ];
 
 define(libs,function(){
@@ -59,9 +63,9 @@ QUnit.moduleDone = function(name, failures, total) {
 // Runs after each test group. Redefining this function will
 // override the built-in #qunit-fixture reset logic.
  
-QUnit.reset = function() {
-  console.log("Test done!");
-};
+//QUnit.reset = function() {
+//  console.log("Test done!");
+//};
 	
 });
 

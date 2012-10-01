@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-  
+
 var libs = [
    '../lib/arango',
   './lib/qunit-1.10.js'
@@ -10,6 +10,9 @@ define(libs,function(arango){
   module('Session');
 
   var db = new arango.Connection({name:"test"});
+
+
+  /* TODO: Make all tests atomic... */
 
   test('set user credentials & validate hashed password',2,function(){
     var user = "test", pass = "word";

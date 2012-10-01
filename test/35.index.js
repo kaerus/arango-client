@@ -1,71 +1,45 @@
-var assert = require('chai').assert 
-  , arango = require('../index')
-  , util = require('util');
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
-var db, id; 
+var libs = [
+   '../lib/arango',
+  './lib/qunit-1.10.js'
+];
+
+define(libs,function(arango){ 
+
+module = QUnit.module;
+
+var db = new arango.Connection({name:"testindex"}), id; 
 var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };
- 
-function initSuite(done){
-  db = new arango.Connection({name:"testcol"});
-  /* reset test collection */
-  db.collection.delete("testcol",function(err,ret){
-    
-    db.collection.create(function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      done();
-    });
-  });
-}
 
-function exitSuite(done){
-  db.collection.delete("testcol",function(err,ret){
-    if(err) assert(!err,util.inspect(ret));
-    done();
-  });
-}
+var utils = require('../lib/utils');
 
-suite('Arango index', function(){
-  suiteSetup(initSuite);
-  
-  test('create index', function(done){
-    db.index.create(hash_index,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      assert(ret.id,"has no id");
-      assert.equal(ret.type,"hash","validate type");
-      assert.equal(ret.unique,false,"validate unique");
-      assert.deepEqual(ret.fields,hash_index.fields,"validate fields");
-      id = ret.id;
-      done();
-    });  
+module("Index");
+
+  asyncTest('create, get, list, delete',10, function(){
+    db.collection.create(function(create){
+      ok(!create,"created collection");
+      db.index.create(hash_index,function(err,ret){
+        ok(!err,"created hash index");
+        ok(ret.id,"has id");
+        equal(ret.type,"hash","type is hash");
+        equal(ret.unique,false,"not unique");
+        deepEqual(ret.fields,hash_index.fields,"validated fields");
+        this.id = ret.id;
+        db.index.get(ret.id,function(err,ret){
+          ok(!err,"retrieved index");
+          assert.deepEqual(ret.fields,hash_index.fields,"validate fields"); 
+          db.index.list(function(list){
+            ok(!list,"list");
+            db.index.delete(this.id,function(deleted){
+              ok(!deleted,"delete");
+              db.collection.delete("testindex");
+              start();
+            });  
+          });
+        });
+      });
+    });    
   });
-  
-  test('get index',function(done){
-    db.index.get(id,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      assert(ret.id,"has no id");
-      assert(ret.id,id,"validate id");
-      assert.equal(ret.type,"hash","validate type");
-      assert.equal(ret.unique,false,"validate unique");
-      assert.deepEqual(ret.fields,hash_index.fields,"validate fields");
-      done();
-    });
-  });
-  
-  test('delete index',function(done){
-    db.index.delete(id,function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      assert(ret.id,"has no id");
-      assert.equal(ret.id,id,"validate id");
-      done();
-    });
-  });
-  
-  test('list index',function(done){ 
-    db.index.list(function(err,ret){
-      if(err) assert(!err,util.inspect(ret));
-      done();
-    });
-  });
-  
-  suiteTeardown(exitSuite);
+
 });
