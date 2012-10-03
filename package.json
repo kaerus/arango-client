@@ -1,6 +1,6 @@
 {
   "name": "arango.client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "ArangoDB javascript client",
   "keywords": [
     "arangodb",
@@ -21,9 +21,6 @@
   	"amdefine": ">=0.0.2"
   },
   "devDependencies": {
-  },
-  "scripts": {
-    "test": "make test"
   },
   "bugs": {
     "url": "https://github.com/kaerus/arango-client/issues"
