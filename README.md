@@ -12,8 +12,7 @@ From source: git clone git://github.com/kaerus/arango-client
 Test
 ----
 ```
-npm install -d
-npm test
+Open index.html from the test directory.
 ```
 
 Building
