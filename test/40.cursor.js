@@ -10,10 +10,10 @@ define(libs,function(arango){
 module = QUnit.module;
 
 var db = new arango.Connection({name:"testcursor"});
-var query = {query:"FOR u IN testcursor RETURN u", count:true, batchSize:1}, counter = 0, more = false;
+var query = {query:"FOR u IN testcursor RETURN u", count:true, batchSize:1};
 
 module("Cursor");
-  asyncTest('create, get, delete',6, function(){
+  asyncTest('create, get, delete',5, function(){
     db.collection.create(function(collection){
       ok(!collection,"collection created");
       var data = {};
@@ -29,20 +29,23 @@ module("Cursor");
         ok(ret.result,"cursor result");
         this.id = ret.id;
         this.count = ret.count;
+        this.counter = 1;
+
         /* read batches */
-        /* TODO: fix this test */
-        do{
-          db.cursor.get(ret.id,function(err,ret){
-            more = ret.hasMore;
-            counter++;
+        this.next_cursor = function(cursor){
+          db.cursor.get(cursor.id,function(err,ret){
+              cursor.counter++;
+              if(!ret.hasMore) {
+                equal(cursor.counter,cursor.count,"retrieved " + cursor.count);
+                db.collection.delete("testcursor");
+                start();
+              }
+              else cursor.next_cursor(cursor);
           });
-        } while(more);
-        equal(counter,this.count,"retrieved " + this.batches);
-        db.cursor.delete(this.id,function(deleted){
-          ok(!deleted,"deleted");
-          db.collection.delete("testcursor");
-          start();
-        });
+        }
+
+        this.next_cursor(this);
+
       });
     });
   });
