@@ -12,7 +12,7 @@ From source: git clone git://github.com/kaerus/arango-client
 Test
 ----
 ```
-Open index.html from the test directory.
+Open/run index.html from the test directory.
 ```
 
 Building
