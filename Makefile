@@ -1,5 +1,5 @@
-BUILDER = @./node_modules/requirejs/bin/r.js
 BUILD_DIR = ./dist
+BUILDER = @./node_modules/requirejs/bin/r.js
 BUILD = $(BUILD_DIR)/arango.out
 
 dist:

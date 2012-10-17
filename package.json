@@ -30,5 +30,5 @@
     "url": "git://github.com/kaerus/arango-client.git"
   },
   "main": "index.js",
-  "license": "MIT"
+  "license": "APACHE2_0"
 }
