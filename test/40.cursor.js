@@ -31,6 +31,7 @@ module("Cursor");
         this.count = ret.count;
         this.counter = 1;
 
+
         /* read batches */
         this.next_cursor = function(cursor){
           db.cursor.get(cursor.id,function(err,ret){
@@ -45,7 +46,6 @@ module("Cursor");
         }
 
         this.next_cursor(this);
-
       });
     });
   });

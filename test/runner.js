@@ -5,7 +5,7 @@ var libs = [
 	'./lib/qunit-1.10.js',
 	'./10.arango.js',
 	'./15.ajax.js',
-	'./20.session.js',
+//	'./20.session.js',
 	'./25.collection.js',
 	'./30.document.js',
 	'./35.index.js',

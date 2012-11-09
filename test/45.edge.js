@@ -28,7 +28,7 @@ module("Edge");
             id = ret._id;
             rev = ret._rev;
             db.edge.head(id,function(err,ret){
-              equal(err,200,"get head 200");
+              ok(!err,"head");
               db.edge.get(id,function(err,ret){
                 ok(!err,"get");
                 docdata = utils.extend(data,{_id:id,_rev:rev,_from:from,_to:to});
