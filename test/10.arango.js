@@ -23,46 +23,46 @@ module('Connection');
     conn = "http://1.2.3.4:1234/test";
     db = new arango.Connection(conn);
     deepEqual({ protocol: 'http',
-                       hostname: '1.2.3.4', 
-                       port: 1234}, db.config.server, 'validate config');
-    equal(db.config.name,'test','collection name');
+                hostname: '1.2.3.4', 
+                port: 1234}, db.server, 'validate config');
+    equal(db.name,'test','collection name');
   });  
   
   test('url parser 2',function(){
     conn = "https://some.host.com:80/database"; 
     db = new arango.Connection(conn);
     deepEqual({ protocol: 'https',
-                       hostname: 'some.host.com', 
-                       port: 80}, db.config.server, 'validate config');
-    equal(db.config.name,'database','collection name');                   
+                hostname: 'some.host.com', 
+                port: 80}, db.server, 'validate config');
+    equal(db.name,'database','collection name');                   
   });  
   
   test('url parser 3',function(){
     conn = "http://username:password@some.host.com:8529/database"; 
     db = new arango.Connection(conn);
     deepEqual({ protocol: 'http',
-                       hostname: 'some.host.com', 
-                       port: 8529}, db.config.server, 'validate config');
-    equal(db.config.name,'database','collection name');
-    equal(db.config.user,'username','username');
-    equal(db.config.pass,db.hashPass('password'),'password');
+                hostname: 'some.host.com', 
+                port: 8529}, db.server, 'validate config');
+    equal(db.name,'database','collection name');
+    equal(db.username,'username','username');
+    equal(db.password,'password');
   });  
   
   test('url parser 4',function(){
     conn = "http://username@some.host.com:8529/database"; 
     db = new arango.Connection(conn);
     deepEqual({ protocol: 'http',
-                       hostname: 'some.host.com', 
-                       port: 8529}, db.config.server, 'validate config');
-    equal(db.config.name,'database','collection name');
-    equal(db.config.user,'username','username');
-    equal(db.config.pass,'','password');
+                hostname: 'some.host.com', 
+                port: 8529}, db.server, 'validate config');
+    equal(db.name,'database','collection name');
+    equal(db.username,'username','username');
+    equal(db.password,undefined,'password');
   });  
   
   test('status', function(){
     stop()
     db = new arango.Connection;
-    db.get("/_admin/status",function(err,ret){
+    db.admin.status(function(err,ret){
       ok(!err);
       start();
     });

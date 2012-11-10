@@ -63,6 +63,7 @@ module("Edge");
                                 db.edge.get(id, function(err,ret){
                                   ok(err,"verify deleted (by get)");
                                   db.edge.head(id, function(err,ret){
+                                    console.log("delete head(%j):", err, ret);
                                     ok(err,"verify deleted (by head)");
                                     db.collection.delete("testedge");
                                     start();
