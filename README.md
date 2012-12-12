@@ -7,9 +7,9 @@ Updates
 2012-12-12 
 * Included the Promise framework by KrisKowal at https://github.com/kriskowal/q.
 * As of ArangoDB v1.1 the session API has been scrapped so it has been removed from the client.
-* Removed support for events in favour of promises.
+* Also removed support for events in favour of promises.
 * Added db.use() to switch connection settings such as collection name, db.use('collection').
-* Query results now gives next() method if there is more data to be fetched. That should also play nicely with ES Harmony iterators. 
+* Query results now yields a next() method if there is more data to be fetched. That should play nicely with ES Harmony iterators. 
 * Added support for ArangoDB actions through db.action.define(), db.action.invoke() 
 
 Install
