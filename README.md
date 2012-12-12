@@ -220,7 +220,7 @@ To invoke an action you first need to define it.
 db.action.define(
     {
       name: 'someAction',
-      url: 'http://127.0.0.1:8529/test'
+      url: 'http://127.0.0.1:8530/test'
       method: 'post',
       result: function(res){ console.log("res:", res ) },
       error: function(err){ console.log("err:", err) }   
