@@ -33,7 +33,7 @@ However, require.js is included by default when installing through npm.
 
 Introduction
 ------------
-ArangoDB api calls return a promise but they may also be called using a legacy callback.
+The api always returns a promise but it may also be called using a callback.
 
 Providing a callback returns an error-flag/code, result and headers.
 ```javascript
@@ -47,39 +47,10 @@ db.document.get(docid,function(err,res,hdr){
 Using a promise
 ```javascript
 db.document.get(docid)
-  .then(function(res){console.log("result:", res)},
-    function(err){console.log("error:", err)});
+  .then(function(res,hdr){ console.log("(%s):", hdr, res) },
+    function(err){ console.log("error:", err) } );
 ```
 
-
-Using events
-------------
-Note: Events has from version 0.5.6 been replaced by promises.
-
-You may also use events as a means to receive data or errors.
-This can be very useful in some cases, however the current implementation 
-is somewhat limited at the moment but new exciting developements are in the pipeline.
-
-The on 'error' event passes an error object with error.code and error.message.
-```javascript
-db.document.get("error").on('error',function(error){
-  console.log("err(%s):",error.code, error.message);
-});
-```
-On 'result' event passes the returned data and headers.
-```javascript
-db.document.list().on('result',function(result){
-  console.log("result:", util.inspect(result));
-});
-```
-For details regarding the ArangoDB interface check out lib/api/ 
-and use the nodejs/browser console to experiment.
-```javascript
-node
-arango = require('arango.client')
-{ Connection: [Function] }
-db = new arango.Connection
-```
 
 Examples
 ========
