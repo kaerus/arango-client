@@ -16,16 +16,18 @@ var utils = require('../lib/utils');
 
 module("Document");
   
-asyncTest('create & get with implicit collection',4, function(){
+asyncTest('create & get with implicit collection',5, function(){
   db.collection.create('testimplicit',function(create){
     ok(!create,"collection");
     db.document.create(data,function(err,ret){
       ok(!err,"created");
       this.id = ret._id;
+      ok(ret._id,"has document id");
       this.rev = ret._rev;
       db.document.get(this.id,function(err,doc){
         ok(!err,"retrieved");
         this.docdata = utils.extend({_id:this.id,_rev:this.rev},data);
+        console.log("doc:", doc);
         deepEqual(this.docdata,doc,"validated data");
         db.collection.delete("testimplicit");
         start();
