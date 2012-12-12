@@ -33,19 +33,29 @@ However, require.js is included by default when installing through npm.
 
 Introduction
 ------------
-All callbacks receives error code, return value and message headers.
-If the error is set, return contains an error message, otherwise return
-contains whatever yields from the database, usually in the form of a json object. 
+ArangoDB api calls return a promise but they may also be called using a legacy callback.
+
+Providing a callback returns an error-flag/code, result and headers.
 ```javascript
-db.document.get(docid,function(err,ret,hdr){
+db.document.get(docid,function(err,res,hdr){
   console.log("headers:", util.inspect(hdr));
-  if(err) console.log("err(%s):", err, ret);
-  else console.log("result: ", util.inspect(ret));
+  if(err) console.log("err(%s):", err, res);
+  else console.log("result: ", util.inspect(res));
 });
 ```
 
+Using a promise
+```javascript
+db.document.get(docid)
+  .then(function(res){console.log("result:", res)},
+    function(err){console.log("error:", err)});
+```
+
+
 Using events
 ------------
+Note: Events has from version 0.5.6 been replaced by promises.
+
 You may also use events as a means to receive data or errors.
 This can be very useful in some cases, however the current implementation 
 is somewhat limited at the moment but new exciting developements are in the pipeline.
@@ -98,50 +108,50 @@ db = new arango.Connection({name:"database", user:"master"});
 
 /* mixed mode */
 db = new arango.Connection("http://test.host.com:80/default",{user:uname,pass:pwd});
+
+/* with use() you can switch connection settings */
+db.use("http://new.server/collection")
+
+/* db.server dumps server configuration */
+db.server
+
 ```
 
 Creating collections & documents
 -------------------------------
 ```javascript
 /* Create a 'test' collection */
+db.use("test");
+
 db.collection.create(function(err,ret){
   console.log("error(%s): ", err, ret);
 });
 
 /* create a new document in 'test' collection */
-db.document.create({a:'test',b:123,c:Date()},function(err,ret){
-  if(err) console.log("error(%s): ", err, ret);
-  else console.log(util.inspect(ret));
-});
+db.document.create({a:'test',b:123,c:Date()})
+  .then(function(res,hdr){
+    console.log("(%s):",hdr,util.inspect(res)) },
+    function(err){ console.log("error(%s): ", err) }
+);  
 
-/* get a list of all documents in collection */
-db.document.list(function(err,ret){
-  if(err) console.log("error(%s): ", err, ret);
-  else console.log(util.inspect(ret));
-});
+/* get a list of all documents */
+db.use("collection123")
+  .document.list()
+  .then(function(res){ console.log("result", res) },
+    function(err){ console.log("error", err) } );
  
-/* create a new document and create a new collection on demand */
-db.document.create(true,"newcollection",{a:"test"},function(err,ret){
-  if(err) console.log("error(%s): ", err, ret);
-  else console.log(util.inspect(ret));
+/* create a new document and create a new */
+/* collection by passing true as first argument */
+db.document.create(true,"newcollection",{a:"test"})
+  .then(function(res){ console.log("res", util.inspect(res) },
+    function(err){ console.log("err", err) } );
 });
 
-/* create another document in the new collection */
-db.document.create("newcollection",{b:"test"},function(err,ret){
-  if(err) console.log("error(%s): ", err, ret);
-  else console.log(util.inspect(ret));
+/* create another document in the collection */
+db.document.create("newcollection",{b:"test"})
+  .then(function(res){ console.log("res", util.inspect(res) },
+    function(err){ console.log("err", err) } );
 });
-```
-Utilizing events
-----------------
-Sometimes it's better to use events instead of callbacks.
-
-```javascript
-/* alternate style utilizing events */
-db.document.list("newcollection").on('result',function(result){
-  console.log(util.inspect(result));
-});
-/* errors are logged to console per default */
 ```
 
 Queries
@@ -169,16 +179,16 @@ and the variable in the query string is denoted with a single @ .
 
 Query builder
 -------------
-The query builder is still experimental and prone for changes.
-Batch size can be set using the ```query.count(<number>)``` method.
-However iterations over result sets are not fully supported yet.
+Result batch size can be set using the ```query.count(<number>)``` method.
+In case of partial results the next batch can be retrieved with res.next().
 ```javascript
-/* using the experimental query builder */
+/* using the query builder */
 query = db.query.for('u').in('users')
           .filter('u.contact.address.state == @state')
           .collect('region = u.contact.region').into('group')
           .sort('LENGTH(group) DESC').limit('0, 5')
           .return('{"region": region, "count": LENGTH(group)}');
+
 
 /* show the composed query string */
 console.log("Arango query:", query.string);
@@ -189,9 +199,10 @@ query.test(function(err,ret){
 });
 
 /* execute the query and set the variable 'state' */
-query.exec({state: "CA"}, function(err,ret){
-  console.log("err(%s):",err,ret);
-});
+query.exec({state: "CA"})
+  .then(function(res){ console.log("res",res) },
+    function(err){ console.log("err",err) });
+
 
 /* detailed query explanation */
 query.explain({state:"CA"},function(err,ret){
@@ -216,6 +227,32 @@ query.exec({gender:"female",likes:"running"},function(err,ret){
   console.log("err(%s):",err,ret);
 });
 ```
+
+Actions
+-------
+ArangoDB supports user defined actions that can be used for implementing business logic or creating complex queries serverside.
+To request an action you first need to define it.
+```javascript
+/* define an action */
+db.action.define(
+    {
+      name: 'someAction',
+      url: 'http://127.0.0.1:8529/test'
+      method: 'post',
+      result: function(res){ console.log("res:", res ) },
+      error: function(err){ console.log("err:", err) }   
+    }
+);
+
+/* invoke the action */
+var data = {test:"data"}
+db.action.invoke("someAction",data);
+
+/* you can also pass a callback */
+db.action.invoke("someAction",data,function(err,ret){
+  console.log("err(%s):", err, ret); 
+}); 
+
 
 
 License
