@@ -10,7 +10,7 @@ Updates
 * Removed support for events in favour of promises.
 * Added db.use() to switch connection settings such as collection name, db.use('collection').
 * Query results now gives next() method if there is more data to be fetched. That should also play nicely with ES Harmony iterators. 
-
+* Added support for ArangoDB actions through db.action.define(), db.action.invoke() 
 
 Install
 -------
