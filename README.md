@@ -11,6 +11,7 @@ Updates
 * Added db.use() to switch connection settings such as collection name, db.use('collection').
 * Query results now yields a next() method if there is more data to be fetched. That should play nicely with ES Harmony iterators. 
 * Added support for ArangoDB actions through db.action.define(), db.action.invoke() 
+* Changed to Apache 2.0 license
 
 Install
 -------
