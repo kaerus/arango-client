@@ -202,7 +202,8 @@ query.exec({gender:"female",likes:"running"},function(err,ret){
 Actions
 -------
 ArangoDB supports user defined actions that can be used for implementing business logic or creating complex queries serverside.
-To request an action you first need to define it.
+
+To invoke an action you first need to define it.
 ```javascript
 /* define an action */
 db.action.define(
@@ -224,6 +225,7 @@ db.action.invoke("someAction",data,function(err,ret){
   console.log("err(%s):", err, ret); 
 }); 
 
+```
 
 
 License
