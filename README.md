@@ -35,18 +35,66 @@ make dist
 This creates a single minified javascript file in the ```dist``` directory.
 
 
-Usage
-=====
+Introduction
+============
 You can use arango-client either as node.js server module or from a web client.
 Since arango-client is written in AMD compatible fashion you should be able 
 to require it in your project using any standard AMD loader.
 However, require.js is included by default when installing through npm.
 
-Introduction
-------------
-The api always returns a promise but it may also be called using a callback.
 
-Providing a callback returns an error-flag/code, result and headers.
+Require
+-------
+To use the client in nodejs you require it.
+```javascript
+var arango = require('arango.client')
+``` 
+
+For usage in a web browser you should use the minified file found in /dist/arango.js.
+Then load the client using an AMD compatible loader, such as require.js.
+A minimal html page accessing ArangoDB from the web client can look like this.
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Cache-control" content="no-cache">
+  <title>ArangoDB</title>
+</head>
+
+<body>
+  <h1>Arango-Client</h1>
+  <div></div>
+
+    <script src="require.js"></script>
+    <script> 
+    define(['arango'],function(arango){
+      var e = document.getElementsByTagName("div")[0];
+
+      /* connects to location.host (web server) */
+      var db = new arango.Connection;
+      
+      /* change the tcp port if needed */ 
+      db.use({port:8529});
+
+      /* list all collections */
+      db.collection.list().then(function(res){
+        e.innerHTML = "Result: " + JSON.stringify(res);
+      }, function(err){
+        e.innerHTML = "Error: " + JSON.stringify(err);
+      });
+    
+    });    
+    </script>
+</body>
+```
+
+
+Usage
+-----
+The api methods always return a promise but they also take a callback function.
+
+Example using a callback:
 ```javascript
 db.document.get(docid,function(err,res,hdr){
   console.log("headers:", util.inspect(hdr));
@@ -55,7 +103,7 @@ db.document.get(docid,function(err,res,hdr){
 });
 ```
 
-Using a promise
+Example using a promise:
 ```javascript
 db.document.get(docid)
   .then(function(res,hdr){ console.log("(%s):", hdr, res) },
@@ -65,11 +113,6 @@ db.document.get(docid)
 
 Examples
 ========
-Require
--------
-```javascript
-var arango = require('arango.client')
-``` 
  
 Initialization
 --------------
