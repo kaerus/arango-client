@@ -50,7 +50,7 @@ To use the client in nodejs you require it.
 var arango = require('arango.client')
 ``` 
 
-For usage in a web browser you should use the minified file found in /dist/arango.js.
+For usage in a web browser you probably want to use the compressed file dist/arango.js.gz (9KB).
 Then load the client using an AMD compatible loader, such as require.js.
 A minimal html page accessing ArangoDB from the web client can look like this.
 ```html
@@ -110,9 +110,6 @@ db.document.get(docid)
     function(err){ console.log("error:", err) } );
 ```
 
-
-Examples
-========
  
 Initialization
 --------------
