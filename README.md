@@ -106,7 +106,7 @@ db.document.get(docid,function(err,res,hdr){
 Example using a promise:
 ```javascript
 db.document.get(docid)
-  .then(function(res,hdr){ console.log("(%s):", hdr, res) },
+  .then(function(res){ console.log("Result: ", res.result) },
     function(err){ console.log("error:", err) } );
 ```
 
@@ -151,27 +151,27 @@ db.collection.create(function(err,ret){
 
 /* create a new document in 'test' collection */
 db.document.create({a:'test',b:123,c:Date()})
-  .then(function(res,hdr){
-    console.log("(%s):",hdr,util.inspect(res)) },
+  .then(function(res){
+    console.log("(%s):",JSON.stringify(res.headers),JSON.stringify(res.result)) },
     function(err){ console.log("error(%s): ", err) }
 );  
 
 /* get a list of all documents */
 db.use("collection123")
   .document.list()
-  .then(function(res){ console.log("result", res) },
+  .then(function(res){ console.log("result", res.result) },
     function(err){ console.log("error", err) } );
  
 /* create a new document and create a new */
 /* collection by passing true as first argument */
 db.document.create(true,"newcollection",{a:"test"})
-  .then(function(res){ console.log("res", util.inspect(res) },
+  .then(function(res){ console.log("res", JSON.stringify(res.result) },
     function(err){ console.log("err", err) } );
 });
 
 /* create another document in the collection */
 db.document.create("newcollection",{b:"test"})
-  .then(function(res){ console.log("res", util.inspect(res) },
+  .then(function(res){ console.log("res", JSON.stringify(res.result) },
     function(err){ console.log("err", err) } );
 });
 ```
@@ -222,7 +222,7 @@ query.test(function(err,ret){
 
 /* execute the query and set the variable 'state' */
 query.exec({state: "CA"})
-  .then(function(res){ console.log("res",res) },
+  .then(function(res){ console.log("res",res.result) },
     function(err){ console.log("err",err) });
 
 
@@ -262,7 +262,7 @@ db.action.define(
       name: 'someAction',
       url: 'http://127.0.0.1:8530/test'
       method: 'post',
-      result: function(res){ console.log("res:", res ) },
+      result: function(res){ console.log("res:", res.result ) },
       error: function(err){ console.log("err:", err) }   
     }
 );
