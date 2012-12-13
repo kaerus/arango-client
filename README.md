@@ -65,30 +65,30 @@ A minimal html page accessing ArangoDB from the web client can look like this.
 <body>
   <h1>Arango-Client</h1>
   <div></div>
+    <script data-main="app" src="require.js"></script>
+</body>
+```
 
-    <script src="require.js"></script>
-    <script> 
-    define(['arango'],function(arango){
+And then create an app.js that looks like this.
+```javascript
+define(['arango'],function(arango){
       var e = document.getElementsByTagName("div")[0];
 
-      /* connects to location.host (web server) */
       var db = new arango.Connection;
       
-      /* change the tcp port if needed */ 
-      db.use({port:8529});
-
       /* list all collections */
       db.collection.list().then(function(res){
-        e.innerHTML = "Result: " + JSON.stringify(res);
+
+        e.innerHTML = "Headers: " + JSON.stringify(res.headers) + "<br/>" +
+                      "Result: " + JSON.stringify(res.result);
       }, function(err){
         e.innerHTML = "Error: " + JSON.stringify(err);
       });
     
-    });    
-    </script>
-</body>
+}); 
 ```
-
+Note: The above example assumes you are requiring the non compressed file found in dist/arango.js.
+ 
 
 Usage
 -----
