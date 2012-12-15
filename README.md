@@ -4,6 +4,8 @@ A client for the ArangoDB nosql database.
 
 Updates
 -------
+2012-12-16
+* Using home rolled Promises/A+ (https://github.com/promises-aplus/promises-spec) instead of Q. 
 2012-12-12 
 * Included the Promise framework by KrisKowal at https://github.com/kriskowal/q.
 * As of ArangoDB v1.1 the session API has been scrapped so it has been removed from the client.
