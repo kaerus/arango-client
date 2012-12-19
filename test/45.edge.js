@@ -15,8 +15,8 @@ var utils = require('../lib/utils');
 
 module("Edge");  
   asyncTest('create edge', function(){
-    db.collection.create(function(err){
-      ok(!err,"colleciton created");    
+    db.collection.create({type:3},function(err){
+      ok(!err,"collection created");    
       db.document.create(true,data,function(err,ret){
         ok(!err,"doc1 created");
         from = ret._id;

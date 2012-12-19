@@ -63,9 +63,9 @@ QUnit.moduleDone = function(name, failures, total) {
 // Runs after each test group. Redefining this function will
 // override the built-in #qunit-fixture reset logic.
  
-//QUnit.reset = function() {
-//  console.log("Test done!");
-//};
+QUnit.reset = function() {
+  console.log("Test done!");
+};
 	
 });
 
