@@ -1,8 +1,8 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 var libs = [
-   '../lib/arango',
-  './lib/qunit-1.10.js'
+   '../../lib/arango',
+  '../lib/qunit-1.10.js'
 ];
 
 define(libs,function(arango){ 
