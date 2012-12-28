@@ -107,15 +107,12 @@ module = QUnit.module;
 
 module('Promise');
 
-test('has Promise constructor', 1, function(){   
-    equal(typeof Promise,'function',"is function");    
+test('Promise methods', 4, function(){   
+    equal(typeof Promise,'function',"Promise()");
+    equal(typeof Promise().then,'function',"then()"); 
+    equal(typeof Promise().fullfilled,'function',"fullfilled()");
+    equal(typeof Promise().rejected,'function',"rejected()");   
 });
-
-
-test('has a then method', 1, function(){   
-    equal(typeof Promise().then,'function',"is function");    
-});
-
 
 asyncTest('call onFullfilled on fullfilled',1, function(){
 	Promise().fullfilled(true)
@@ -138,6 +135,33 @@ asyncTest('call onRjected on rejected',1, function(){
 		});
 });
 
+asyncTest('fullfill calls multiple onFullfill',3, function(){
+	Promise().fullfilled(true)
+		.then(function(f){
+			equal(f,true,"onFullfilled1");
+		},undefined)
+		.then(function(f){
+			equal(f,true,"onFullfilled2");
+		},undefined)
+		.then(function(f){
+			equal(f,true,"onFullfilled3");
+			start();
+		},undefined);
+});
+
+asyncTest('fullfill calls multiple onRejected',3, function(){
+	Promise().rejected(true)
+		.then(undefined,function(f){
+			equal(f,true,"onRejected1");
+		})
+		.then(undefined,function(f){
+			equal(f,true,"onRejected2");
+		})
+		.then(undefined,function(f){
+			equal(f,true,"onRejected3");
+			start();
+		});
+});
 
 asyncTest('multiple fullfillment values',5, function(){
 	Promise().fullfilled(1,"a",{a:1},function(){return true})
@@ -151,6 +175,60 @@ asyncTest('multiple fullfillment values',5, function(){
 
 		},function(r){
 			ok(r,"onRejected");
+		});
+});
+
+asyncTest('nested fullfillments',3, function(){
+	Promise().fullfilled(1)
+		.then(function(f){
+			equal(f,1,"onFullfilled1");
+			return Promise().fullfilled(2);
+		},undefined)
+		.then(function(f){
+			equal(f,2,"onFullfilled2");
+			return Promise().fullfilled(3);
+		},undefined)
+		.then(function(f){
+			equal(f,3,"onFullfilled3");
+			start();
+		},undefined);
+});
+
+asyncTest('nested rejections',3, function(){
+	Promise().rejected(1)
+		.then(undefined,function(f){
+			equal(f,1,"onRejected1");
+			return Promise().rejected(2);
+		})
+		.then(undefined,function(f){
+			equal(f,2,"onRejected2");
+			return Promise().rejected(3);
+		},undefined)
+		.then(undefined,function(f){
+			equal(f,3,"onRejected3");
+			start();
+		});
+});
+
+asyncTest('nested fullfillments & rejections',3, function(){
+	Promise().fullfilled(1)
+		.then(function(f){
+			equal(f,1,"onFullfilled1");
+			return Promise().rejected(2);
+		},function(r){
+			ok(r,"should not be called");
+		})
+		.then(function(r){
+			ok(r,"should not be called");
+		},function(f){
+			equal(f,2,"onRejected2");
+			return Promise().fullfilled(3);
+		})
+		.then(function(f){
+			equal(f,3,"onFullfilled3");
+			start();
+		},function(r){
+			ok(r,"should not be called");
 		});
 });
 
@@ -274,7 +352,7 @@ asyncTest('can not fullfill after rejection',1, function(){
 	this.promise.fullfilled(false);
 });
 
-asyncTest('Forward exceptions',2, function(){
+asyncTest('Forwards exceptions',2, function(){
 
 	Promise().fullfilled(true).then(function(f){
 		ok(f,"fullfilled1");
@@ -296,6 +374,41 @@ asyncTest('Forward exceptions',2, function(){
 });
 
 
+asyncTest('immutable onFullfill',1, function(){
+	this.promise = Promise();
+
+	this.promise.then(function(f){
+		ok(f,"onFullfill");
+		start();
+	}, function(r){
+		ok(r,"rejected");
+	});
+
+	/* should be ignored */
+	this.promise.then(function(f){
+		ok(false,"onFullfill");
+	}, function(r){
+		ok(r,"rejected");
+	});
+
+	this.promise.fullfilled(true);
+});
+
+asyncTest('immutable onReject',1, function(){
+	this.promise = Promise();
+
+	this.promise.then(undefined,function(f){
+		ok(f,"onReject");
+		start();
+	});
+
+	/* should be ignored */
+	this.promise.then(undefined,function(f){
+		ok(false,"onReject");
+	});
+
+	this.promise.rejected(true);
+});
 
 
 
