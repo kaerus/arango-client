@@ -12,7 +12,7 @@ module = QUnit.module;
 var db = new arango.Connection({name:'testimplicit'})
   , data = {somedata:"test1",somemore:"test2"};
 
-var utils = require('../lib/utils');
+var utils = require('../../lib/utils');
 
 module("Document");
   
@@ -27,7 +27,6 @@ asyncTest('create & get with implicit collection',5, function(){
       db.document.get(this.id,function(err,doc){
         ok(!err,"retrieved");
         this.docdata = utils.extend({_id:this.id,_rev:this.rev},data);
-        console.log("doc:", doc);
         deepEqual(this.docdata,doc,"validated data");
         db.collection.delete("testimplicit");
         start();

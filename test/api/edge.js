@@ -11,7 +11,7 @@ module = QUnit.module;
 
 var db = new arango.Connection({name:"testedge"});
 var from, to, id, rev, data = {e:123}, doc = {a:1,b:2};
-var utils = require('../lib/utils');
+var utils = require('../../lib/utils');
 
 module("Edge");  
   asyncTest('create edge', function(){
@@ -63,7 +63,6 @@ module("Edge");
                                 db.edge.get(id, function(err,ret){
                                   ok(err,"verify deleted (by get)");
                                   db.edge.head(id, function(err,ret){
-                                    console.log("delete head(%j):", err, ret);
                                     ok(err,"verify deleted (by head)");
                                     db.collection.delete("testedge");
                                     start();

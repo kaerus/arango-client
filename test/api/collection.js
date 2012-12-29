@@ -80,7 +80,6 @@ asyncTest('get & set properties',5,function(){
     db.collection.getProperties("testprop",function(err,p){
       ok(!err,"get properties");
       var sync = !(p.waitForSync), size = p.journalSize * 10;
-      console.log("properties sync=%s size=%s:", sync,size,p);
       db.collection.setProperties("testprop",{waitForSync: sync,journalSize:size},function(err,ret){
         ok(!err,"set properties");
         equal(ret.waitForSync,sync,"waitForSync changed");

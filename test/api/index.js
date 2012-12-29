@@ -12,7 +12,7 @@ module = QUnit.module;
 var db = new arango.Connection({name:"testindex"}), id; 
 var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };
 
-var utils = require('../lib/utils');
+var utils = require('../../lib/utils');
 
 module("Index");
 

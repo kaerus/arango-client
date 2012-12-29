@@ -9,57 +9,64 @@ define(libs,function(arango){
 
 module = QUnit.module;
 
-var db = new arango.Connection({name:"testkey"});
-var key, id, db
-  , options = {}, data = "this is a test"
-  , extend = {a:1,b:2}, date = new Date();
-
-//var utils = require('../lib/utils');
-
+var db = new arango.Connection(),
+    key, id, 
+    options = {}, 
+    data = "this is a test",
+    extend = {a:1,b:2}, date = new Date();
 
 module("Key");  
-asyncTest('create, get, update & verify',function(){
-  db.collection.create(function(err){
-    ok(!err,"created collection");
+
+db.use("testkey");
+
+asyncTest('create, get, update & verify',14,function(){
+    db.collection.create().then(function(ret) {
+    ok(1,"created collection");
     key = "testkey";
     date.setDate(date.getDate()+1);
     date.setMilliseconds(0);  // Note: adb truncates millisecs
     options.expires = date;
     options.extended = extend; 
-    db.key.create(key,options,data,function(err,ret){
-      ok(!err,"created key");
-      id = ret._id; // ? 
-      db.key.get(key,function(err,ret,hdr){
-        ok(!err,"get");
-        var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
-        console.log("x-voc-expires:",hdr['x-voc-expires']);
-        equal(d.toISOString(),
-                     date.toISOString(),"validate expiration");
-        deepEqual(JSON.parse(hdr['x-voc-extended']),
-                     extend,"validate extended");
-        assert.equal(ret,data,"validate data"); 
-        options.extend = {b:3,c:1};
-        data = "we have updated the data";
-        db.key.put(key,options,data,function(err,ret){
-          ok(!err,"update");
-          ok(ret.changed,"validate changed");
-          db.key.get(key,function(err,ret,hdr){
-            ok(!err,"refresh");
-            var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
-            equal(d.toISOString(),
-                       date.toISOString(),"validate expiration");
-            deepEqual(JSON.parse(hdr['x-voc-extended']),
-                       extend,"validate extended");
-            equal(ret,data,"validate data");         
-            db.key.delete(key,function(err,ret){
-              ok(!err,"deleted");
-              db.collection.delete("testkey");
-              start();
-            });    
-          });
-        });            
-      });
-    });
-  });
-});
-});
+
+    return db.key.create(key,options,data);
+  }).then(function(ret){
+    ok(1,"created key");
+    id = ret._id; // ? 
+
+    return db.key.get(key);
+  }).then(function(ret,hdr) {
+    ok(1,"got key value");
+    var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
+    equal(d.toISOString(), date.toISOString(),"validate expiration");
+    deepEqual(JSON.parse(hdr['x-voc-extended']), extend,"validate extended");
+    equal(ret,data,"validate data"); 
+    options.extend = {b:3,c:1};
+    data = "we have updated the data";
+
+    return db.key.put(key,options,data);
+  }).then(function(ret) {    
+    ok(!err,"updated key value using put");
+    ok(ret.changed,"validate changed");
+
+    return db.key.get(key);
+  }).then(function(ret,hdr) {  
+    ok(1,"refreshed key value by get");
+    var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
+    equal(d.toISOString(), date.toISOString(),"validate expiration");
+    deepEqual(JSON.parse(hdr['x-voc-extended']),extend,"validate extended");
+    equal(ret,data,"validate data");       
+
+    return db.key.delete(key);
+  }).then(function(ret) {
+    ok(1,"deleted key");
+
+    return db.collection.delete("testkey");
+  }).then(function(ret) {
+    ok(1,"deleted test collection");
+    start();
+  },function(err){
+    start();
+  }); 
+});     
+  
+});  
