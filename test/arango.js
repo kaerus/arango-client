@@ -59,14 +59,5 @@ module('Connection');
     equal(db.password,undefined,'password');
   });  
   
-  test('status', function(){
-    stop()
-    db = new arango.Connection;
-    db.admin.status(function(err,ret){
-      ok(!err);
-      start();
-    });
-  });
-  
 
 });

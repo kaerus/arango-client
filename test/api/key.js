@@ -5,35 +5,43 @@ var libs = [
   '../lib/qunit-1.10.js'
 ];
 
+QUnit.config.autostart = false;
+
 define(libs,function(arango){ 
 
 module = QUnit.module;
 
-var db = new arango.Connection(),
+var db = new arango.Connection({name:"testkey"}),
     key, id, 
     options = {}, 
     data = "this is a test",
     extend = {a:1,b:2}, date = new Date();
+QUnit.start();
 
-module("Key");  
+module("Key",{
+  setup: function(){
+    QUnit.stop();
+    db.collection.create("testkey",function(){
+      QUnit.start();
+    });
+  },
+  teardown: function(){
+    db.collection.delete("testkey");
+  }
+});  
 
-db.use("testkey");
-
-asyncTest('create, get, update & verify',14,function(){
-    db.collection.create().then(function(ret) {
-    ok(1,"created collection");
+asyncTest('create, get, update & verify',12,function(){
     key = "testkey";
     date.setDate(date.getDate()+1);
     date.setMilliseconds(0);  // Note: adb truncates millisecs
     options.expires = date;
     options.extended = extend; 
 
-    return db.key.create(key,options,data);
-  }).then(function(ret){
-    ok(1,"created key");
-    id = ret._id; // ? 
+    db.key.create(key,options,data).then(function(ret){
+      ok(1,"created key");
+      id = ret._id; // ? 
 
-    return db.key.get(key);
+      return db.key.get(key);
   }).then(function(ret,hdr) {
     ok(1,"got key value");
     var d = new Date(Date.parse(hdr['x-voc-expires'].toUpperCase()));
@@ -45,7 +53,7 @@ asyncTest('create, get, update & verify',14,function(){
 
     return db.key.put(key,options,data);
   }).then(function(ret) {    
-    ok(!err,"updated key value using put");
+    ok(1,"updated key value using put");
     ok(ret.changed,"validate changed");
 
     return db.key.get(key);
@@ -59,12 +67,9 @@ asyncTest('create, get, update & verify',14,function(){
     return db.key.delete(key);
   }).then(function(ret) {
     ok(1,"deleted key");
-
-    return db.collection.delete("testkey");
-  }).then(function(ret) {
-    ok(1,"deleted test collection");
     start();
   },function(err){
+    ok(false,err.message);
     start();
   }); 
 });     

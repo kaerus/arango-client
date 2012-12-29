@@ -2,22 +2,21 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 var libs = [
 
-	'./lib/qunit-1.10.js',
-	'./ajax.js',
-	'./promise.js',
-	'./arango.js',
-	'./api/collection.js',
-	'./api/document.js',
-	'./api/index.js',
-	'./api/cursor.js',
-	'./api/edge.js',
-	'./api/key.js'
+	'lib/qunit-1.10.js',
+	'ajax.js',
+	'promise.js',
+	'arango.js',
+	'api/collection.js',
+	'api/document.js',
+	'api/index.js',
+	'api/cursor.js',
+	'api/edge.js',
+	'api/key.js'
 ];
 
 define(libs,function(){
 
-// Runs once at the very beginning.
- 
+// Runs once at the very beginning. 
 QUnit.begin = function() {
   console.log("Running Test Suite");
 };
@@ -66,6 +65,7 @@ QUnit.moduleDone = function(name, failures, total) {
 QUnit.reset = function() {
   console.log("Test done!");
 };
+
 	
 });
 

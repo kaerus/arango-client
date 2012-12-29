@@ -92,12 +92,12 @@ asyncTest('get & set properties',5,function(){
 });
 
 asyncTest('unload & load',5,function(){
-  db.collection.create("testload",function(create){
-  ok(!create,"created");
+  db.collection.create("testload",function(err){
+  ok(!err,"created");
     db.collection.unload("testload",function(err,ret){
       ok(!err,"unloaded");
       id = ret.id;
-      equal(ret.status,4,"status 4");
+      equal(ret.status,2,"status 2");
       db.collection.load(id,function(err,ret){
         ok(!err,"loaded");
         equal(ret.status,3,"status 3");

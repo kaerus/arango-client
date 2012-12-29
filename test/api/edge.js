@@ -2,16 +2,16 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 var libs = [
    '../../lib/arango',
+   '../../lib/utils',
   '../lib/qunit-1.10.js'
 ];
 
-define(libs,function(arango){ 
+define(libs,function(arango,utils){ 
 
 module = QUnit.module;
 
 var db = new arango.Connection({name:"testedge"});
 var from, to, id, rev, data = {e:123}, doc = {a:1,b:2};
-var utils = require('../../lib/utils');
 
 module("Edge");  
   asyncTest('create edge', function(){

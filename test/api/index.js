@@ -2,17 +2,16 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 var libs = [
    '../../lib/arango',
-  '../lib/qunit-1.10.js'
+   '../../lib/utils',
+   '../lib/qunit-1.10.js'
 ];
 
-define(libs,function(arango){ 
+define(libs,function(arango,utils){ 
 
 module = QUnit.module;
 
 var db = new arango.Connection({name:"testindex"}), id; 
 var hash_index = { "type" : "hash", "unique" : false, "fields" : [ "a", "b" ] };
-
-var utils = require('../../lib/utils');
 
 module("Index");
 
