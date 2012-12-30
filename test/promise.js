@@ -110,14 +110,14 @@ module('Promise');
 test('Promise methods', 4, function(){   
     equal(typeof Promise,'function',"Promise()");
     equal(typeof Promise().then,'function',"then()"); 
-    equal(typeof Promise().fullfilled,'function',"fullfilled()");
+    equal(typeof Promise().fulfilled,'function',"fulfilled()");
     equal(typeof Promise().rejected,'function',"rejected()");   
 });
 
-asyncTest('call onFullfilled on fullfilled',1, function(){
-	Promise().fullfilled(true)
+asyncTest('call onfulfilled on fulfilled',1, function(){
+	Promise().fulfilled(true)
 		.then(function(f){
-			equal(f,true,"onFullfilled");
+			equal(f,true,"onfulfilled");
 			start();
 
 		},function(r){
@@ -128,7 +128,7 @@ asyncTest('call onFullfilled on fullfilled',1, function(){
 asyncTest('call onRjected on rejected',1, function(){
 	Promise().rejected(true)
 		.then(function(f){
-			ok(r,"onFullfilled");
+			ok(r,"onfulfilled");
 		},function(r){
 			equal(r,true,"onRejected");
 			start();
@@ -136,15 +136,15 @@ asyncTest('call onRjected on rejected',1, function(){
 });
 
 asyncTest('fullfill calls multiple onFullfill',3, function(){
-	Promise().fullfilled(true)
+	Promise().fulfilled(true)
 		.then(function(f){
-			equal(f,true,"onFullfilled1");
+			equal(f,true,"onfulfilled1");
 		},undefined)
 		.then(function(f){
-			equal(f,true,"onFullfilled2");
+			equal(f,true,"onfulfilled2");
 		},undefined)
 		.then(function(f){
-			equal(f,true,"onFullfilled3");
+			equal(f,true,"onfulfilled3");
 			start();
 		},undefined);
 });
@@ -164,7 +164,7 @@ asyncTest('fullfill calls multiple onRejected',3, function(){
 });
 
 asyncTest('multiple fullfillment values',5, function(){
-	Promise().fullfilled(1,"a",{a:1},function(){return true})
+	Promise().fulfilled(1,"a",{a:1},function(){return true})
 		.then(function(a,b,c,d){
 			equal(a,1,"1");
 			equal(b,"a","a");
@@ -179,17 +179,17 @@ asyncTest('multiple fullfillment values',5, function(){
 });
 
 asyncTest('nested fullfillments',3, function(){
-	Promise().fullfilled(1)
+	Promise().fulfilled(1)
 		.then(function(f){
-			equal(f,1,"onFullfilled1");
-			return Promise().fullfilled(2);
+			equal(f,1,"onfulfilled1");
+			return Promise().fulfilled(2);
 		},undefined)
 		.then(function(f){
-			equal(f,2,"onFullfilled2");
-			return Promise().fullfilled(3);
+			equal(f,2,"onfulfilled2");
+			return Promise().fulfilled(3);
 		},undefined)
 		.then(function(f){
-			equal(f,3,"onFullfilled3");
+			equal(f,3,"onfulfilled3");
 			start();
 		},undefined);
 });
@@ -211,9 +211,9 @@ asyncTest('nested rejections',3, function(){
 });
 
 asyncTest('nested fullfillments & rejections',3, function(){
-	Promise().fullfilled(1)
+	Promise().fulfilled(1)
 		.then(function(f){
-			equal(f,1,"onFullfilled1");
+			equal(f,1,"onfulfilled1");
 			return Promise().rejected(2);
 		},function(r){
 			ok(r,"should not be called");
@@ -222,10 +222,10 @@ asyncTest('nested fullfillments & rejections',3, function(){
 			ok(r,"should not be called");
 		},function(f){
 			equal(f,2,"onRejected2");
-			return Promise().fullfilled(3);
+			return Promise().fulfilled(3);
 		})
 		.then(function(f){
-			equal(f,3,"onFullfilled3");
+			equal(f,3,"onfulfilled3");
 			start();
 		},function(r){
 			ok(r,"should not be called");
@@ -233,25 +233,25 @@ asyncTest('nested fullfillments & rejections',3, function(){
 });
 
 
-asyncTest('ignore undefined onFullfilled',1, function(){
+asyncTest('ignore undefined onfulfilled',1, function(){
 	Promise().rejected(true).then(undefined,function(r){
-		ok(r,"onFullfilled is undefined");
+		ok(r,"onfulfilled is undefined");
 		start();
 	});
 });
 
 asyncTest('ignore undefined onRejected',1, function(){
-	Promise().fullfilled(true).then(function(r){
+	Promise().fulfilled(true).then(function(r){
 		ok(r,"onRejected is undefined");
 		start();
 	}, undefined);
 });
 
-asyncTest('undefined onFullfilled forwards fullfillment',1, function(){
-	Promise().fullfilled(true)
+asyncTest('undefined onfulfilled forwards fulfillment',1, function(){
+	Promise().fulfilled(true)
 		.then(undefined, undefined)
 		.then(function(r){
-			ok(r,"next onFullfilled then");
+			ok(r,"next onfulfilled then");
 			start();
 		},undefined);
 });
@@ -267,8 +267,8 @@ asyncTest('undefined onRejected forwards rejection',1, function(){
 
 
 asyncTest('forward return value',3, function(){
-	Promise().fullfilled(true).then(function(r){
-		ok(r,true,"fullfilled true");
+	Promise().fulfilled(true).then(function(r){
+		ok(r,true,"fulfilled true");
 		return "abc";
 	}, undefined)
 	.then(function(r){
@@ -296,7 +296,7 @@ asyncTest('forward rejection value',3, function(){
 	});
 });
 
-asyncTest('fullfilled only once',1, function(){
+asyncTest('fulfilled only once',1, function(){
 	this.promise = Promise();
 
 	this.promise.then(function(f){
@@ -306,15 +306,15 @@ asyncTest('fullfilled only once',1, function(){
 		ok(r,"rejected");
 	});
 
-	this.promise.fullfilled(true);
-	this.promise.fullfilled(false);
+	this.promise.fulfilled(true);
+	this.promise.fulfilled(false);
 });
 
 asyncTest('rejected only once',1, function(){
 	this.promise = Promise();
 
 	this.promise.then(function(f){
-		ok(f,"fullfilled");
+		ok(f,"fulfilled");
 	}, function(r){
 		ok(r,"onRejected");
 		start();
@@ -324,7 +324,7 @@ asyncTest('rejected only once',1, function(){
 	this.promise.rejected(false);
 });
 
-asyncTest('can not reject after fullfillment',1, function(){
+asyncTest('can not reject after fulfillment',1, function(){
 	this.promise = Promise();
 
 	this.promise.then(function(f){
@@ -334,11 +334,11 @@ asyncTest('can not reject after fullfillment',1, function(){
 		ok(r,"rejected");
 	});
 
-	this.promise.fullfilled(true);
+	this.promise.fulfilled(true);
 	this.promise.rejected(false);
 });
 
-asyncTest('can not fullfill after rejection',1, function(){
+asyncTest('can not fulfill after rejection',1, function(){
 	this.promise = Promise();
 
 	this.promise.then(function(f){
@@ -349,13 +349,13 @@ asyncTest('can not fullfill after rejection',1, function(){
 	});
 
 	this.promise.rejected(true);
-	this.promise.fullfilled(false);
+	this.promise.fulfilled(false);
 });
 
 asyncTest('Forwards exceptions',2, function(){
 
-	Promise().fullfilled(true).then(function(f){
-		ok(f,"fullfilled1");
+	Promise().fulfilled(true).then(function(f){
+		ok(f,"fulfilled1");
 		_x_x_x /* undefined variable */
 	},function(r){
 		/* not reached */
@@ -364,7 +364,7 @@ asyncTest('Forwards exceptions',2, function(){
 	.then(undefined,undefined) // ignored 
 	.then(function(r){
 		/* not reached */
-		ok(r,"fullfilled2")
+		ok(r,"fulfilled2")
 	},function(e){
 		/* exception caught here */
 		ok(e instanceof Error,"Error");
@@ -391,7 +391,7 @@ asyncTest('immutable onFullfill',1, function(){
 		ok(r,"rejected");
 	});
 
-	this.promise.fullfilled(true);
+	this.promise.fulfilled(true);
 });
 
 asyncTest('immutable onReject',1, function(){
