@@ -91,21 +91,27 @@ asyncTest('get & set properties',5,function(){
   });   
 });
 
-asyncTest('unload & load',5,function(){
-  db.collection.create("testload",function(err){
-  ok(!err,"created");
-    db.collection.unload("testload",function(err,ret){
-      ok(!err,"unloaded");
-      id = ret.id;
-      equal(ret.status,2,"status 2");
-      db.collection.load(id,function(err,ret){
-        ok(!err,"loaded");
-        equal(ret.status,3,"status 3");
-        db.collection.delete("testload");
-        start();
-      });
-    });
-  });    
+asyncTest('unload & load',6,function(){
+  db.collection.create("testload").then(function(ret){
+    ok(1,"created");
+    equal(ret.status,3,"status 3");
+    return db.collection.load("testload");
+  }).then(function(ret) {
+    ok(1,"loaded");
+    id = ret.id;
+    equal(ret.status,3,"status 3");
+    return db.collection.unload(id);
+  }).then(function(ret) {
+    ok(1,"unloaded");
+    /* status is sometimes 2 ? */
+    equal(ret.status,4,"status 4");
+    return db.collection.delete("testload");
+  }).then(function() {  
+    start();
+  },function(err){
+    ok(false,err.message);
+    start();
+  });
 });
 
 asyncTest('rename',4,function(){
