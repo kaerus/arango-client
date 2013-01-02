@@ -138,14 +138,16 @@ asyncTest('call onRjected on rejected',1, function(){
 		});
 });
 
-asyncTest('fullfill calls multiple onFullfill',3, function(){
+asyncTest('fullfill chain',3, function(){
 	this.promise = new Promise;
 	this.promise.fulfill(true)
 		.then(function(f){
 			equal(f,true,"onfulfilled1");
+			return true;
 		},undefined)
 		.then(function(f){
 			equal(f,true,"onfulfilled2");
+			return true;
 		},undefined)
 		.then(function(f){
 			equal(f,true,"onfulfilled3");
@@ -153,19 +155,21 @@ asyncTest('fullfill calls multiple onFullfill',3, function(){
 		},undefined);
 });
 
-asyncTest('fullfill calls multiple onRejected',3, function(){
+asyncTest('rejected return fullfills chain',3, function(){
 	this.promise = new Promise;
 	this.promise.reject(true)
 		.then(undefined,function(f){
 			equal(f,true,"onRejected1");
+			return true;
 		})
-		.then(undefined,function(f){
-			equal(f,true,"onRejected2");
+		.then(function(f){
+			equal(f,true,"onFulfill2");
+			return true;
 		})
-		.then(undefined,function(f){
-			equal(f,true,"onRejected3");
+		.then(function(f){
+			equal(f,true,"onFulfill3");
 			start();
-		});
+		},undefined);
 });
 
 asyncTest('multiple fullfillment values',5, function(){
@@ -430,7 +434,7 @@ asyncTest('multiple onReject',2, function(){
 	this.promise.reject(true);
 });
 
-asyncTest('multiple then handlers',1, function(){
+asyncTest('multiple then handlers',4, function(){
 	this.promise = new Promise();
 	this.promise.fulfill(1);
 	this.promise.then(function(a){
