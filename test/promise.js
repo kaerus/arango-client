@@ -430,6 +430,28 @@ asyncTest('multiple onReject',2, function(){
 	this.promise.reject(true);
 });
 
+asyncTest('multiple then handlers',1, function(){
+	this.promise = new Promise();
+	this.promise.fulfill(1);
+	this.promise.then(function(a){
+		equal(a,1,"handler called with value");
+		return a+1
+	});
+	this.promise.then(function(a){
+		equal(a,1,"handler called with value");
+		return a+1
+	});
+	this.promise.then(function(a){
+		equal(a,1,"handler called with value");
+		return a+1
+	});
+	this.promise.then(function(a){
+		equal(a,1,"handler called with value");
+		start();
+	});
+
+});
+
 
 
 });
