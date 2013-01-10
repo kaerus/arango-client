@@ -175,12 +175,12 @@ asyncTest('rejected return fullfills chain',3, function(){
 asyncTest('multiple fullfillment values',5, function(){
 	this.promise = new Promise;
 	this.promise.fulfill(1,"a",{a:1},function(){return true})
-		.then(function(a,b,c,d){
-			equal(a,1,"1");
-			equal(b,"a","a");
-			deepEqual(c,{a:1},"{a:1}");
-			equal(typeof d,'function',"function()");
-			equal(d(),true,"function returns true");
+		.then(function(a){
+			equal(a[0],1,"1");
+			equal(a[1],"a","a");
+			deepEqual(a[2],{a:1},"{a:1}");
+			equal(typeof a[3],'function',"function()");
+			equal(a[3](),true,"function returns true");
 			start();
 
 		},function(r){
