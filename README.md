@@ -4,6 +4,9 @@ A client for the ArangoDB nosql database.
 
 Updates
 -------
+1013-01-11
+* Updated promises with include and spread functions.
+* Embedding http headers & statusCode into response object as _headers_ & _status_.
 2012-12-16
 * Using home rolled Promises/A+ (https://github.com/promises-aplus/promises-spec) instead of Q.
 * onFullfill can now receive multiple arguments from resolved promises, promise.resolve(result,headers,code). 
@@ -81,10 +84,9 @@ define(['arango'],function(arango){
       var db = new arango.Connection;
       
       /* list all collections */
-      db.collection.list().then(function(res,hdr){
+      db.collection.list().then(function(res){
 
-        e.innerHTML = "Headers: " + JSON.stringify(hdr) + "<br/>" +
-                      "Result: " + JSON.stringify(res);
+        e.innerHTML = "Result: " + JSON.stringify(res);
       }, function(err){
         e.innerHTML = "Error: " + JSON.stringify(err);
       });
@@ -100,17 +102,16 @@ The api methods always return a promise but they also take a callback function.
 
 Example using a callback:
 ```javascript
-db.document.get(docid,function(err,res,hdr){
-  console.log("headers:", util.inspect(hdr));
+db.document.get(docid,function(err,res){
   if(err) console.log("err(%s):", err, res);
-  else console.log("result: ", util.inspect(res));
+  else console.log("result: ", JSON.stringify(res));
 });
 ```
 
 Example using a promise:
 ```javascript
 db.document.get(docid)
-  .then(function(res,hdr,code){ console.log("Headers(%s) Code(%s) Result:", hdr, code, res) },
+  .then(function(res){ console.log("Result:", res) },
     function(err){ console.log("error:", err) } );
 ```
 
@@ -138,6 +139,9 @@ db = new arango.Connection("http://test.host.com:80/default",{user:uname,pass:pw
 /* with use() you can switch connection settings */
 db.use("http://new.server/collection")
 
+/* use another collection */
+db.use("another");
+
 /* db.server dumps server configuration */
 db.server
 
@@ -147,23 +151,20 @@ Creating collections & documents
 -------------------------------
 ```javascript
 /* Create a 'test' collection */
-db.use("test");
-
-db.collection.create(function(err,ret){
+db.use("test").collection.create(function(err,ret){
   console.log("error(%s): ", err, ret);
 });
 
 /* create a new document in 'test' collection */
 db.document.create({a:'test',b:123,c:Date()})
-  .then(function(res,hdr){
-    console.log("(%s):",JSON.stringify(hdr),JSON.stringify(res)) },
+  .then(function(res){ console.log(res); },
     function(err){ console.log("error(%s): ", err) }
 );  
 
 /* get a list of all documents */
 db.use("collection123")
   .document.list()
-  .then(function(res){ console.log("result", res) },
+  .then(function(res){ console.log(res) },
     function(err){ console.log("error", err) } );
  
 /* create a new document and create a new */
@@ -178,7 +179,31 @@ db.document.create("newcollection",{b:"test"})
   .then(function(res){ console.log("res", JSON.stringify(res) },
     function(err){ console.log("err", err) } );
 });
+
+
+/* combine two requests, use spread instead of */
+/* then to get multiple arguments in callback */
+db.document.get(a).include(db.document.get(b))
+  .spread(function(A,B){
+    console.log("docA(%j) docB(%s)", A, B);
+  }, function(err){
+    console.log(err); 
+});
+
+
+/* chain requests */
+db.collection.list()
+  .then(function(cols){
+    /* get a list of all documents */
+    /* from the first collection.  */ 
+    return db.document.list(cols[0].name);
+}).then(function(docs){
+    console.log("documents:", docs);
+});
+
 ```
+
+
 
 Queries
 -------
