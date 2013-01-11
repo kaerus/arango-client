@@ -4,9 +4,10 @@ A client for the ArangoDB nosql database.
 
 Updates
 -------
-1013-01-11
-* Updated promises with include and spread functions.
+2013-01-11
+* Extended promises with include and spread functions, then gets a single fulfillment value.
 * Embedding http headers & statusCode into response object as _headers_ & _status_.
+
 2012-12-16
 * Using home rolled Promises/A+ (https://github.com/promises-aplus/promises-spec) instead of Q.
 * onFullfill can now receive multiple arguments from resolved promises, promise.resolve(result,headers,code). 
