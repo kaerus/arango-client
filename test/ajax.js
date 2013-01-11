@@ -6,7 +6,7 @@ var libs = [
 ];
 
 define(libs,function(Ajax){ 
-  var params = {protocol:'http',hostname:"127.0.0.1",port:8529,path:"/_admin/status"}, request, data;
+  var params = {timeout: 2000,protocol:'http', hostname:"127.0.0.1",port:8529,path:"/_admin/status"}, request, data;
   module = QUnit.module;
 
   module('Ajax');
@@ -16,8 +16,12 @@ define(libs,function(Ajax){
   });
   
   data = [];
+
+  /* NOTE: These tests acts differently without a network connection */
+
   asyncTest("Connect",4,function(){
-    new Ajax.request(params,function(res){  
+    this.params = params;
+    new Ajax.request(this.params,function(res){  
       res.on('data',function(buffer){
         data.push(buffer);
         ok(data,"We got data");
@@ -39,11 +43,11 @@ define(libs,function(Ajax){
 
   });
 
-  /* NOTE: This test acts differently without a network connection */
   asyncTest("Timeout",1, function(){
-    params.hostname = "1.2.3.4";
-    params.timeout = 2000;
-    new Ajax.request(params,function(response){
+    this.params = params;
+    this.params.hostname = "1.2.3.4";
+    console.log("params", this.params);
+    new Ajax.request(this.params,function(response){
       response.on('error',function(err){
         equal(err.type,'REQUEST',err.type + ':' + err.message);
         start();
