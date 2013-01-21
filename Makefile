@@ -1,11 +1,20 @@
 BUILD_DIR = ./dist
-BUILDER = @./node_modules/requirejs/bin/r.js
-BUILD = $(BUILD_DIR)/arango.out
+BUILDER = @./node_modules/.bin/webmake
+BUILD = $(BUILD_DIR)/arango
+MINIFY = @./node_modules/.bin/uglifyjs 
 
-dist:
-	$(BUILDER) -o name=arango out=$(BUILD) baseUrl=./lib preserveLicenseComments=false
-	@cat ./COPYRIGHT $(BUILD) > $(BUILD_DIR)/arango.js
-	@gzip -9 $(BUILD_DIR)/arango.js -c > $(BUILD_DIR)/arango.js.gz
-	@rm $(BUILD)
+webclient: commonjs amd
+	
+commonjs:
+	@echo "Building CommonJS module"
+	$(BUILDER) --name arango.client ./index.js $(BUILD).js
+	$(MINIFY) $(BUILD).js -c -m > $(BUILD).min.js
+	@gzip -9 $(BUILD).min.js -c > $(BUILD).js.gz
 
-.PHONY: dist
+amd: 
+	@echo "Building AMD module"
+	$(BUILDER) --name arango.client ./index.js --amd $(BUILD)-amd.js
+	$(MINIFY) $(BUILD)-amd.js -c -m > $(BUILD)-amd.min.js
+	@gzip -9 $(BUILD)-amd.min.js -c > $(BUILD)-amd.js.gz
+
+.PHONY: webclient

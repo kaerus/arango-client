@@ -4,6 +4,15 @@ A client for the ArangoDB nosql database.
 
 Updates
 -------
+2013-01-20
+* Starting to finalize the framework.
+* All modules now "use strict".
+* Recovered from AMD detour and reverted back to commonJS.
+* Using new build facillity called <a href="https://github.com/medikoo/modules-webmake">webmaker</a> by medikoo! 
+* Removed excessive collection parameters from API functions in favour of db.use('collection').
+* Simplified polymorphic API function declarations by utils.Params();
+* Moved query and action modules to the api section where they belong. 
+
 2013-01-11
 * Extended promises with include and spread functions, then gets a single fulfillment value.
 * Embedding http headers & statusCode into response object as _headers_ & _status_.

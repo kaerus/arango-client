@@ -16,11 +16,9 @@
   "contributors": [
     "anders elo <anders@kaerus.com>"
   ],
-  "dependencies": {
-  	"amdefine": ">=0.0.2"
-  },
   "devDependencies": {
-    "requirejs":">=2.0.6",
+    "webmake":">=0.3.14",
+    "uglify-js":">=2.2.3",
     "qunit":">=0.5.15"
   },
   "bugs": {
