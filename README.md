@@ -4,6 +4,8 @@ A client for the ArangoDB nosql database.
 
 Updates
 -------
+2013-02-14
+* Web client has now been ported into a component found <a href="https://github.com/kaerus-component">here</a> 
 2013-01-20
 * Starting to finalize the framework.
 * All modules now "use strict".
